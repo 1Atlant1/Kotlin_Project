@@ -1,6 +1,5 @@
 package com.example.kotlin_project.ui.screens.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -11,31 +10,75 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.kotlin_project.ui.theme.InfoGreen
+import com.example.kotlin_project.ui.theme.InfoGreenText
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    onCategoryClick: (String) -> Unit
+    onCategoryClick: (String) -> Unit,
+    onPlateClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     val categories by viewModel.categories.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("EveryDayDia", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.WaterDrop,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(40.dp)
             )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = "EveryDayDia",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Diabetes Calculator",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
-    ) { paddingValues ->
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+        Text(
+            text = "What's on your plate?",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "Choose a category to count your carbs.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
         if (categories.isEmpty()) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -43,14 +86,43 @@ fun HomeScreen(
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(paddingValues).fillMaxSize()
+                contentPadding = PaddingValues(bottom = 80.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
                 items(categories) { category ->
-                    CategoryCard(category = category, viewModel = viewModel, onClick = onCategoryClick)
+                    CategoryCard(
+                        category = category,
+                        viewModel = viewModel,
+                        onClick = { onCategoryClick(category) }
+                    )
                 }
+            }
+        }
+
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 80.dp),
+            colors = CardDefaults.cardColors(containerColor = InfoGreen)
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = null,
+                    tint = InfoGreenText
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "1 XE = 12g carbohydrates",
+                    color = InfoGreenText,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
     }
@@ -60,40 +132,49 @@ fun HomeScreen(
 fun CategoryCard(
     category: String,
     viewModel: HomeViewModel,
-    onClick: (String) -> Unit
+    onClick: () -> Unit
 ) {
     val count by viewModel.getDishCount(category).collectAsState()
     val icon = getIconForCategory(category)
 
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
-            .clickable { onClick(category) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .height(140.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(16.dp)
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             Text(
                 text = category,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "$count items",
+                text = "$count dishes",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -101,9 +182,8 @@ fun CategoryCard(
     }
 }
 
-// Простая функция для подбора иконки по названию категории
 @Composable
-fun getIconForCategory(category: String) = when (category) {
+fun getIconForCategory(category: String): ImageVector = when (category) {
     "Soups" -> Icons.Default.LocalDining
     "Hot dishes" -> Icons.Default.Restaurant
     "Sweets" -> Icons.Default.Cake
