@@ -5,8 +5,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.screens.category.CategoryScreen
+import com.example.kotlin_project.ui.screens.dish.DishScreen
 import com.example.kotlin_project.ui.screens.home.HomeScreen
 import com.example.kotlin_project.ui.screens.home.HomeViewModel
 import com.example.kotlin_project.ui.screens.home.HomeViewModelFactory
@@ -17,9 +19,7 @@ fun AppNavigation(dishDao: DishDao) {
 
     NavHost(navController = navController, startDestination = "home") {
 
-
         composable("home") {
-
             val homeViewModel: HomeViewModel = viewModel(
                 factory = HomeViewModelFactory(dishDao)
             )
@@ -36,7 +36,23 @@ fun AppNavigation(dishDao: DishDao) {
             CategoryScreen(
                 dishDao = dishDao,
                 categoryName = category,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onDishClick = { dishId ->
+                    navController.navigate("dish/$dishId")
+                }
+            )
+        }
+
+        composable("dish/{dishId}") { backStackEntry ->
+            val dishIdStr = backStackEntry.arguments?.getString("dishId") ?: "0"
+            val dishId = dishIdStr.toIntOrNull() ?: 0
+            DishScreen(
+                dishDao = dishDao,
+                dishId = dishId,
+                onBackClick = { navController.popBackStack() },
+                onAddToPlate = { dish: Dish, weight: Int ->
+                    navController.popBackStack()
+                }
             )
         }
     }

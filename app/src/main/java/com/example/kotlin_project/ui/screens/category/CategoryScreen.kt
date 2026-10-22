@@ -1,5 +1,6 @@
 package com.example.kotlin_project.ui.screens.category
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,23 +14,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
-import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
     dishDao: DishDao,
     categoryName: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onDishClick: (Int) -> Unit
 ) {
-    // Собираем список блюд из базы данных
     val dishes by dishDao.getDishesByCategory(categoryName)
         .collectAsState(initial = emptyList())
 
-    // Переменная для поиска
     var searchQuery by remember { mutableStateOf("") }
-
-    // Фильтруем блюда по поиску
     val filteredDishes = dishes.filter { it.name.contains(searchQuery, ignoreCase = true) }
 
     Scaffold(
@@ -54,7 +51,6 @@ fun CategoryScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            // Поле поиска
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -77,7 +73,10 @@ fun CategoryScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(filteredDishes) { dish ->
-                        DishItem(dish = dish)
+                        DishItem(
+                            dish = dish,
+                            onClick = { onDishClick(dish.id) }
+                        )
                     }
                 }
             }
@@ -86,9 +85,11 @@ fun CategoryScreen(
 }
 
 @Composable
-fun DishItem(dish: Dish) {
+fun DishItem(dish: Dish, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -110,10 +111,9 @@ fun DishItem(dish: Dish) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            // Бейдж с ХЕ (упрощенный расчет для отображения)
             val xe = dish.carbsPer100g / 12.0
             AssistChip(
-                onClick = { /* Пока ничего не делаем */ },
+                onClick = onClick,
                 label = { Text(String.format("%.2f ХЕ", xe)) }
             )
         }
