@@ -54,7 +54,7 @@ fun CategoryScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                label = { Text("Поиск блюда") },
+                label = { Text("search dish") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -66,7 +66,7 @@ fun CategoryScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Блюда не найдены", style = MaterialTheme.typography.bodyLarge)
+                    Text("No dishes found", style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
                 LazyColumn(

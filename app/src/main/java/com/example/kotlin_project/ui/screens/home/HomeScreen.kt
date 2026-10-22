@@ -93,7 +93,7 @@ fun CategoryCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "$count блюд",
+                text = "$count items",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

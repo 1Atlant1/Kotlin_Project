@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.everydaydia"
-    compileSdk = 36
+    namespace = "com.example.kotlin_project"
+    compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.everydaydia"
+        applicationId = "com.example.kotlin_project"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

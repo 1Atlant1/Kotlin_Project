@@ -77,8 +77,8 @@ fun DishScreen(
                 OutlinedTextField(
                     value = weightText,
                     onValueChange = { weightText = it.filter { ch -> ch.isDigit() || ch == '.' } },
-                    label = { Text("Вес порции (г)") },
-                    placeholder = { Text("Например, 250") },
+                    label = { Text("Portion weight (g)") },
+                    placeholder = { Text("e.g., 250") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
@@ -105,7 +105,7 @@ fun DishScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = weight > 0
                 ) {
-                    Text("Добавить в тарелку", fontSize = 16.sp)
+                    Text("Add to plate", fontSize = 16.sp)
                 }
             }
         }
@@ -120,7 +120,7 @@ fun NutritionCard(dish: Dish) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Пищевая ценность на 100 г",
+                text = "Nutrition per 100g",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -129,16 +129,16 @@ fun NutritionCard(dish: Dish) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NutritionItem("Углеводы", "${dish.carbsPer100g} г")
-                NutritionItem("Белки", "${dish.proteinPer100g} г")
+                NutritionItem("Carbs", "${dish.carbsPer100g} g")
+                NutritionItem("Protein", "${dish.proteinPer100g} g")
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NutritionItem("Жиры", "${dish.fatPer100g} г")
-                NutritionItem("Ккал", "${dish.caloriesPer100g}")
+                NutritionItem("Fat", "${dish.fatPer100g} g")
+                NutritionItem("Kcal", "${dish.caloriesPer100g}")
             }
         }
     }
@@ -163,16 +163,16 @@ fun ResultCard(weight: Double, carbs: Double, xe: Double) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Ваша порция: ${weight.toInt()} г",
+                text = "Your portion: ${weight.toInt()} g",
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Углеводы: ${String.format("%.1f", carbs)} г",
+                text = "Carbs: ${String.format("%.1f", carbs)} g",
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = String.format("%.2f ХЕ", xe),
+                text = String.format("%.2f XE", xe),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
