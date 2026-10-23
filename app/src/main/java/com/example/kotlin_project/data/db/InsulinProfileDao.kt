@@ -13,7 +13,4 @@ interface InsulinProfileDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProfile(profile: InsulinProfile)
-
-    @Query("DELETE FROM insulin_profiles WHERE id = :id")
-    suspend fun deleteProfile(id: Int)
 }

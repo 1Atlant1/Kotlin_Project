@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [Dish::class, InsulinProfile::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -30,6 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "everydaydia_database"
                 )
+                    .fallbackToDestructiveMigration(false)
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
@@ -47,12 +48,8 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private suspend fun populateDatabase(dishDao: DishDao, insulinDao: InsulinProfileDao) {
-            DatabaseSeeder.initialDishes.forEach { dish ->
-                dishDao.insertDish(dish)
-            }
-            DatabaseSeeder.initialInsulins.forEach { insulin ->
-                insulinDao.insertProfile(insulin)
-            }
+            DatabaseSeeder.initialDishes.forEach { dish -> dishDao.insertDish(dish) }
+            DatabaseSeeder.initialInsulins.forEach { insulin -> insulinDao.insertProfile(insulin) }
         }
     }
 }

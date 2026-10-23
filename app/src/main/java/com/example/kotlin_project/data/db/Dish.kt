@@ -8,6 +8,7 @@ data class Dish(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
+    val nameRu: String = "",
     val category: String,
     val carbsPer100g: Double,
     val proteinPer100g: Double = 0.0,
