@@ -1,5 +1,9 @@
 package com.example.kotlin_project.ui.screens.dish
 
+import coil.compose.AsyncImage
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,6 +71,18 @@ fun DishScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                val currentDish = dish
+                if (currentDish != null && currentDish.imagePath != null && currentDish.imagePath.isNotBlank()) {
+                    AsyncImage(
+                        model = currentDish.imagePath,
+                        contentDescription = currentDish.name,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
                 NutritionCard(dish = dish!!)
 
                 OutlinedTextField(

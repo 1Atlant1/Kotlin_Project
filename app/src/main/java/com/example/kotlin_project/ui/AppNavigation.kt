@@ -21,6 +21,7 @@ import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.components.BottomNavItem
 import com.example.kotlin_project.ui.screens.category.AddDishScreen
 import com.example.kotlin_project.ui.screens.category.CategoryScreen
+import com.example.kotlin_project.ui.screens.category.EditDishScreen
 import com.example.kotlin_project.ui.screens.dish.DishScreen
 import com.example.kotlin_project.ui.screens.home.HomeScreen
 import com.example.kotlin_project.ui.screens.home.HomeViewModel
@@ -89,7 +90,8 @@ fun AppNavigation(dishDao: DishDao) {
                     categoryName = category,
                     onBackClick = { navController.popBackStack() },
                     onDishClick = { navController.navigate("dish/$it") },
-                    onAddDishClick = { navController.navigate("add_dish/$category") }
+                    onAddDishClick = { navController.navigate("add_dish/$category") },
+                    onEditDishClick = { navController.navigate("edit_dish/$it") }
                 )
             }
             composable("dish/{dishId}") { backStackEntry ->
@@ -109,6 +111,15 @@ fun AppNavigation(dishDao: DishDao) {
                 AddDishScreen(
                     dishDao = dishDao,
                     defaultCategory = category,
+                    onBackClick = { navController.popBackStack() },
+                    onDishSaved = { navController.popBackStack() }
+                )
+            }
+            composable("edit_dish/{dishId}") { backStackEntry ->
+                val dishId = (backStackEntry.arguments?.getString("dishId") ?: "0").toIntOrNull() ?: 0
+                EditDishScreen(
+                    dishDao = dishDao,
+                    dishId = dishId,
                     onBackClick = { navController.popBackStack() },
                     onDishSaved = { navController.popBackStack() }
                 )

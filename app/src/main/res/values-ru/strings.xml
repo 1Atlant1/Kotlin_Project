@@ -107,4 +107,10 @@
     <string name="add_photo_hint">Нажмите, чтобы добавить фото</string>
     <string name="carbs_required">Обязательно для расчёта ХЕ</string>
     <string name="borderline_warning">Сахар на нижней границе. Рекомендуется снизить дозу на 30%.</string>
+    <string name="dish_actions_hint">Долгое нажатие для редактирования или удаления</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_dish_title">Удалить блюдо?</string>
+    <string name="delete_dish_confirmation">Вы уверены, что хотите удалить %s?</string>
+    <string name="edit_dish_title">Редактировать блюдо</string>
 </resources>

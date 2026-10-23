@@ -89,4 +89,10 @@
     <string name="add_photo_hint">Tap to add photo</string>
     <string name="carbs_required">Required for XE calculation</string>
     <string name="borderline_warning">Glucose is on the lower side. Consider reducing dose by 30%.</string>
+    <string name="dish_actions_hint">Long press to edit or delete</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="delete_dish_title">Delete dish?</string>
+    <string name="delete_dish_confirmation">Are you sure you want to delete %s?</string>
+    <string name="edit_dish_title">Edit Dish</string>
 </resources>
