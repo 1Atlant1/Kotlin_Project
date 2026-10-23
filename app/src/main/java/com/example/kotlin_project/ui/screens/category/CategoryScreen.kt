@@ -12,13 +12,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.theme.InfoGreen
 import com.example.kotlin_project.ui.theme.InfoGreenText
+import com.example.kotlin_project.ui.utils.getDisplayName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,23 +29,23 @@ fun CategoryScreen(
     dishDao: DishDao,
     categoryName: String,
     onBackClick: () -> Unit,
-    onDishClick: (Int) -> Unit
+    onDishClick: (Int) -> Unit,
+    onAddDishClick: () -> Unit
 ) {
     val dishes by dishDao.getDishesByCategory(categoryName)
         .collectAsState(initial = emptyList())
 
     var searchQuery by remember { mutableStateOf("") }
-    val filteredDishes = dishes.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    val filteredDishes = dishes.filter {
+        it.name.contains(searchQuery, ignoreCase = true) ||
+                it.nameRu.contains(searchQuery, ignoreCase = true)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = categoryName,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
+                    Text(text = categoryName, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
@@ -57,7 +60,7 @@ fun CategoryScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* TODO: добавить своё блюдо */ },
+                onClick = onAddDishClick,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add dish", tint = MaterialTheme.colorScheme.onPrimary)
@@ -65,16 +68,12 @@ fun CategoryScreen(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 16.dp)
         ) {
-
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search $categoryName") },
+                placeholder = { Text(stringResource(R.string.search_dish)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -87,32 +86,20 @@ fun CategoryScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "${dishes.size} dishes",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Values per 100g",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Text(text = "${dishes.size} dishes", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.values_per_100g), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             if (filteredDishes.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No dishes found", style = MaterialTheme.typography.bodyLarge)
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(stringResource(R.string.no_dishes_found), style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
                 LazyColumn(
@@ -120,37 +107,19 @@ fun CategoryScreen(
                     contentPadding = PaddingValues(bottom = 80.dp)
                 ) {
                     items(filteredDishes) { dish ->
-                        DishItemCard(
-                            dish = dish,
-                            onClick = { onDishClick(dish.id) }
-                        )
+                        DishItemCard(dish = dish, onClick = { onDishClick(dish.id) })
                     }
                 }
             }
 
-
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 80.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 80.dp),
                 colors = CardDefaults.cardColors(containerColor = InfoGreen)
             ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = null,
-                        tint = InfoGreenText,
-                        modifier = Modifier.size(20.dp)
-                    )
+                Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = InfoGreenText, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Select a dish to enter your portion weight.",
-                        color = InfoGreenText,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Text(text = stringResource(R.string.select_dish_hint), color = InfoGreenText, style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
@@ -168,47 +137,29 @@ fun DishItemCard(dish: Dish, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 modifier = Modifier.size(60.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = dish.name.take(1),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Text(text = dish.name.take(1), style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.primary)
                 }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = dish.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "${dish.carbsPer100g}g carbs/100g",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Text(text = dish.getDisplayName(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(text = "${dish.carbsPer100g}g carbs/100g", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Surface(
-                shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
+            Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.primaryContainer) {
                 Text(
                     text = String.format("%.2fXE", xe),
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.stateIn
 
 class HomeViewModel(private val dishDao: DishDao) : ViewModel() {
 
-    // Получаем список категорий и превращаем в StateFlow для удобного использования в Compose
     val categories: StateFlow<List<String>> = dishDao.getAllCategories()
         .stateIn(
             scope = viewModelScope,
@@ -18,7 +17,6 @@ class HomeViewModel(private val dishDao: DishDao) : ViewModel() {
             initialValue = emptyList()
         )
 
-    // Получаем количество блюд для каждой категории (для бейджика)
     fun getDishCount(category: String): StateFlow<Int> {
         return dishDao.getDishCountByCategory(category)
             .stateIn(

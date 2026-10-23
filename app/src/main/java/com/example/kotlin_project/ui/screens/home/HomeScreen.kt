@@ -11,11 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.kotlin_project.ui.theme.InfoGreen
-import com.example.kotlin_project.ui.theme.InfoGreenText
-
+import com.example.kotlin_project.R
+import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 
 @Composable
 fun HomeScreen(
@@ -31,7 +31,6 @@ fun HomeScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
@@ -45,7 +44,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "EveryDayDia",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -60,21 +59,19 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-
         Text(
-            text = "What's on your plate?",
+            text = stringResource(R.string.home_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Choose a category to count your carbs.",
+            text = stringResource(R.string.home_subtitle),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 4.dp)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-
 
         if (categories.isEmpty()) {
             Box(
@@ -101,12 +98,11 @@ fun HomeScreen(
             }
         }
 
-
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 80.dp),
-            colors = CardDefaults.cardColors(containerColor = InfoGreen)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
         ) {
             Row(
                 modifier = Modifier.padding(16.dp),
@@ -115,12 +111,12 @@ fun HomeScreen(
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,
-                    tint = InfoGreenText
+                    tint = MaterialTheme.colorScheme.secondary
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "1 XE = 12g carbohydrates",
-                    color = InfoGreenText,
+                    text = stringResource(R.string.xe_info),
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -150,7 +146,6 @@ fun CategoryCard(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-
             Surface(
                 shape = MaterialTheme.shapes.small,
                 color = MaterialTheme.colorScheme.primaryContainer,
@@ -169,12 +164,12 @@ fun CategoryCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = category,
+                text = getCategoryDisplayName(category),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "$count dishes",
+                text = stringResource(R.string.dishes_count, count),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

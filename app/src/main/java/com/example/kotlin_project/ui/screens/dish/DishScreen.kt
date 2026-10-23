@@ -2,6 +2,7 @@ package com.example.kotlin_project.ui.screens.dish
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -9,15 +10,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
-import androidx.compose.runtime.collectAsState
-import androidx.compose.foundation.text.KeyboardOptions
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,24 +27,21 @@ fun DishScreen(
     onBackClick: () -> Unit,
     onAddToPlate: (Dish, Int) -> Unit
 ) {
-    // Загружаем блюдо из БД
     val dish by dishDao.getDishById(dishId).collectAsState(initial = null)
 
-    // Состояние поля ввода веса
     var weightText by remember { mutableStateOf("") }
     val weight = weightText.toDoubleOrNull() ?: 0.0
 
-    // Расчёты
     val carbsInPortion = if (dish != null) dish!!.carbsPer100g * weight / 100.0 else 0.0
     val xe = carbsInPortion / 12.0
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(dish?.name ?: "Блюдо", fontWeight = FontWeight.Bold) },
+                title = { Text(dish?.name ?: "Dish", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -70,20 +67,17 @@ fun DishScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 NutritionCard(dish = dish!!)
-
 
                 OutlinedTextField(
                     value = weightText,
                     onValueChange = { weightText = it.filter { ch -> ch.isDigit() || ch == '.' } },
-                    label = { Text("Portion weight (g)") },
-                    placeholder = { Text("e.g., 250") },
+                    label = { Text(stringResource(R.string.portion_weight_g)) },
+                    placeholder = { Text(stringResource(R.string.portion_example)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-
 
                 if (weight > 0) {
                     ResultCard(
@@ -95,7 +89,6 @@ fun DishScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-
                 Button(
                     onClick = {
                         if (weight > 0 && dish != null) {
@@ -105,7 +98,7 @@ fun DishScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = weight > 0
                 ) {
-                    Text("Add to plate", fontSize = 16.sp)
+                    Text(stringResource(R.string.add_to_plate), fontSize = 16.sp)
                 }
             }
         }
@@ -120,7 +113,7 @@ fun NutritionCard(dish: Dish) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Nutrition per 100g",
+                text = stringResource(R.string.nutrition_per_100g),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -129,16 +122,16 @@ fun NutritionCard(dish: Dish) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NutritionItem("Carbs", "${dish.carbsPer100g} g")
-                NutritionItem("Protein", "${dish.proteinPer100g} g")
+                NutritionItem(stringResource(R.string.carbs), "${dish.carbsPer100g} g")
+                NutritionItem(stringResource(R.string.protein), "${dish.proteinPer100g} g")
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NutritionItem("Fat", "${dish.fatPer100g} g")
-                NutritionItem("Kcal", "${dish.caloriesPer100g}")
+                NutritionItem(stringResource(R.string.fat), "${dish.fatPer100g} g")
+                NutritionItem(stringResource(R.string.kcal), "${dish.caloriesPer100g}")
             }
         }
     }
@@ -163,16 +156,16 @@ fun ResultCard(weight: Double, carbs: Double, xe: Double) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Your portion: ${weight.toInt()} g",
+                text = stringResource(R.string.your_portion, weight.toInt()),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Carbs: ${String.format("%.1f", carbs)} g",
+                text = stringResource(R.string.carbs_in_portion, carbs),
                 style = MaterialTheme.typography.bodyLarge
             )
             Text(
-                text = String.format("%.2f XE", xe),
+                text = stringResource(R.string.xe_result, xe),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
