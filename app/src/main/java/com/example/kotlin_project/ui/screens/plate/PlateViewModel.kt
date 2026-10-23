@@ -24,7 +24,6 @@ class PlateViewModel : ViewModel() {
     private val _isSportsMode = MutableStateFlow(false)
     val isSportsMode: StateFlow<Boolean> = _isSportsMode.asStateFlow()
 
-
     private val _selectedInsulin = MutableStateFlow("NovoRapid")
     val selectedInsulin: StateFlow<String> = _selectedInsulin.asStateFlow()
 
@@ -38,39 +37,22 @@ class PlateViewModel : ViewModel() {
     )
 
     fun addDishToPlate(dish: Dish, weightGrams: Int) {
-        _plateItems.update { currentItems ->
-            currentItems + PlateItem(dish = dish, weightGrams = weightGrams)
-        }
+        _plateItems.update { currentItems -> currentItems + PlateItem(dish = dish, weightGrams = weightGrams) }
     }
 
     fun removeDishFromPlate(index: Int) {
-        _plateItems.update { currentItems ->
-            currentItems.toMutableList().apply { removeAt(index) }
-        }
+        _plateItems.update { currentItems -> currentItems.toMutableList().apply { removeAt(index) } }
     }
 
-    fun updateGlucose(value: String) {
-        _glucose.value = value
-    }
+    fun updateGlucose(value: String) { _glucose.value = value }
+    fun updateMealPeriod(period: String) { _mealPeriod.value = period }
+    fun toggleSportsMode() { _isSportsMode.update { !it } }
+    fun updateSelectedInsulin(insulin: String) { _selectedInsulin.value = insulin }
 
-    fun updateMealPeriod(period: String) {
-        _mealPeriod.value = period
-    }
-
-    fun toggleSportsMode() {
-        _isSportsMode.update { !it }
-    }
-
-
-    fun updateSelectedInsulin(insulin: String) {
-        _selectedInsulin.value = insulin
-    }
-
-    fun calculateDose(): DoseResult {
+    fun calculateDose(targetGlucose: Double, insulinSensitivity: Double): DoseResult {
         val currentGlucose = _glucose.value.toDoubleOrNull() ?: 0.0
         val period = _mealPeriod.value
         val isSports = _isSportsMode.value
-
         val carbRatioKey = if (isSports) "${period}_sport" else period
         val carbRatio = carbRatios[carbRatioKey] ?: 1.3
 
@@ -78,11 +60,11 @@ class PlateViewModel : ViewModel() {
             plateItems = _plateItems.value,
             currentGlucose = currentGlucose,
             carbRatio = carbRatio,
-            isSportsMode = isSports
+            isSportsMode = isSports,
+            targetGlucose = targetGlucose,
+            insulinSensitivity = insulinSensitivity
         )
     }
 
-    fun clearPlate() {
-        _plateItems.value = emptyList()
-    }
+    fun clearPlate() { _plateItems.value = emptyList() }
 }

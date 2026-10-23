@@ -11,17 +11,15 @@ data class DoseResult(
 )
 
 object InsulinCalculator {
-    private const val TARGET_GLUCOSE = 6.0 // ммоль/л
-
-    private const val INSULIN_SENSITIVITY = 3.0 // ммоль/л на 1 единицу инсулина
 
     fun calculateDose(
         plateItems: List<PlateItem>,
         currentGlucose: Double,
-        carbRatio: Double,  // УК (углеводный коэффициент): сколько единиц инсулина на 1 XE
-        isSportsMode: Boolean = false
+        carbRatio: Double,
+        isSportsMode: Boolean = false,
+        targetGlucose: Double = 6.0,
+        insulinSensitivity: Double = 3.0
     ): DoseResult {
-
         if (currentGlucose < 3.9) {
             return DoseResult(
                 mealBolus = 0.0,
@@ -32,22 +30,16 @@ object InsulinCalculator {
             )
         }
 
-        // Считаем общие XE
         val totalXE = plateItems.sumOf { it.xe }
-
-        // Болюс на еду
         val mealBolus = totalXE * carbRatio
 
-
-        val correction = if (currentGlucose > TARGET_GLUCOSE) {
-            (currentGlucose - TARGET_GLUCOSE) / INSULIN_SENSITIVITY
+        val correction = if (currentGlucose > targetGlucose) {
+            (currentGlucose - targetGlucose) / insulinSensitivity
         } else {
             0.0
         }
 
-
         val totalDose = mealBolus + correction
-
 
         val warning = if (currentGlucose in 3.9..5.0) {
             "Glucose is on the lower side. Consider reducing dose by 30%."
