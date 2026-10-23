@@ -18,7 +18,9 @@ object InsulinCalculator {
         carbRatio: Double,
         isSportsMode: Boolean = false,
         targetGlucose: Double = 6.0,
-        insulinSensitivity: Double = 3.0
+        insulinSensitivity: Double = 3.0,
+        lowGlucoseWarning: String = "Glucose below 3.9 mmol/L. Eat 1-2 XE of fast carbs, wait 15 minutes and recalculate.",
+        borderlineWarning: String = "Glucose is on the lower side. Consider reducing dose by 30%."
     ): DoseResult {
         if (currentGlucose < 3.9) {
             return DoseResult(
@@ -26,7 +28,7 @@ object InsulinCalculator {
                 correction = 0.0,
                 totalDose = 0.0,
                 isLowGlucose = true,
-                warning = "Glucose below 3.9 mmol/L. Eat 1-2 XE of fast carbs, wait 15 minutes and recalculate."
+                warning = lowGlucoseWarning
             )
         }
 
@@ -42,7 +44,7 @@ object InsulinCalculator {
         val totalDose = mealBolus + correction
 
         val warning = if (currentGlucose in 3.9..5.0) {
-            "Glucose is on the lower side. Consider reducing dose by 30%."
+            borderlineWarning
         } else null
 
         return DoseResult(

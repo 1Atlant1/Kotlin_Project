@@ -49,7 +49,12 @@ class PlateViewModel : ViewModel() {
     fun toggleSportsMode() { _isSportsMode.update { !it } }
     fun updateSelectedInsulin(insulin: String) { _selectedInsulin.value = insulin }
 
-    fun calculateDose(targetGlucose: Double, insulinSensitivity: Double): DoseResult {
+    fun calculateDose(
+        targetGlucose: Double,
+        insulinSensitivity: Double,
+        lowGlucoseWarning: String,
+        borderlineWarning: String
+    ): DoseResult {
         val currentGlucose = _glucose.value.toDoubleOrNull() ?: 0.0
         val period = _mealPeriod.value
         val isSports = _isSportsMode.value
@@ -62,7 +67,9 @@ class PlateViewModel : ViewModel() {
             carbRatio = carbRatio,
             isSportsMode = isSports,
             targetGlucose = targetGlucose,
-            insulinSensitivity = insulinSensitivity
+            insulinSensitivity = insulinSensitivity,
+            lowGlucoseWarning = lowGlucoseWarning,
+            borderlineWarning = borderlineWarning
         )
     }
 

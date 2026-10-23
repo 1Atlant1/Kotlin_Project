@@ -47,6 +47,9 @@ fun PlateScreen(
     var insulinExpanded by remember { mutableStateOf(false) }
     var periodExpanded by remember { mutableStateOf(false) }
 
+    val lowGlucoseWarningText = stringResource(R.string.low_glucose_warning)
+    val borderlineWarningText = stringResource(R.string.borderline_warning)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -136,6 +139,7 @@ fun PlateScreen(
                     }
                 }
             }
+
             item {
                 val periods = listOf(
                     "Breakfast" to R.string.breakfast,
@@ -181,7 +185,9 @@ fun PlateScreen(
                     onClick = {
                         val result = viewModel.calculateDose(
                             targetGlucose = settings.targetGlucose,
-                            insulinSensitivity = settings.insulinSensitivity
+                            insulinSensitivity = settings.insulinSensitivity,
+                            lowGlucoseWarning = lowGlucoseWarningText,
+                            borderlineWarning = borderlineWarningText
                         )
                         doseResult = result
                     },
