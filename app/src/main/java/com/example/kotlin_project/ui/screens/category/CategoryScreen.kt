@@ -298,7 +298,7 @@ fun DishItemCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${dish.carbsPer100g}g carbs/100g",
+                    text = stringResource(R.string.carbs_per_100g_format, dish.carbsPer100g),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

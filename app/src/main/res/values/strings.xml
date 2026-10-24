@@ -74,7 +74,7 @@
     <string name="sports_mode_label">Sports</string>
     <string name="u_xe_unit">U/XE</string>
     <string name="sports_values_hint">Sports values are used when Sports is enabled.</string>
-    <string name="selected_insulin">Selected insulin</string>
+    <string name="insulin_list">Insulin list</string>
     <string name="add_custom_insulin">Add custom insulin...</string>
     <string name="add_insulin_title">Add custom insulin</string>
     <string name="insulin_name_label">Insulin name</string>
@@ -95,4 +95,6 @@
     <string name="delete_dish_title">Delete dish?</string>
     <string name="delete_dish_confirmation">Are you sure you want to delete %s?</string>
     <string name="edit_dish_title">Edit Dish</string>
+    <string name="carbs_per_100g_format">%1$s g carbs/100g</string>
+
 </resources>

@@ -91,7 +91,7 @@
     <string name="sports_values_hint">Значения для спорта используются при включённом режиме Спорт.</string>
 
 
-    <string name="selected_insulin">Выбранный инсулин</string>
+    <string name="insulin_list">Список инсулинов</string>
     <string name="add_custom_insulin">Добавить свой инсулин...</string>
     <string name="add_insulin_title">Добавить свой инсулин</string>
     <string name="insulin_name_label">Название инсулина</string>
@@ -113,4 +113,5 @@
     <string name="delete_dish_title">Удалить блюдо?</string>
     <string name="delete_dish_confirmation">Вы уверены, что хотите удалить %s?</string>
     <string name="edit_dish_title">Редактировать блюдо</string>
+    <string name="carbs_per_100g_format">%1$s г углеводов/100г</string>
 </resources>

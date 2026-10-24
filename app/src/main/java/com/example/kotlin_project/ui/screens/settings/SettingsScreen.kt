@@ -121,7 +121,7 @@ fun SettingsScreen(
 
             item {
                 Text(
-                    text = stringResource(R.string.selected_insulin),
+                    text = stringResource(R.string.insulin_list),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 8.dp)
@@ -189,7 +189,7 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
                     value = settings.selectedInsulin,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text(stringResource(R.string.selected_insulin)) },
+                    label = { Text(stringResource(R.string.insulin_list)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     modifier = Modifier
                         .fillMaxWidth()
