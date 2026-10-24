@@ -43,7 +43,11 @@ fun PlateScreen(
     val selectedInsulin by viewModel.selectedInsulin.collectAsState()
     val settings by settingsViewModel.settings.collectAsState()
 
-    var doseResult by remember { mutableStateOf<com.example.kotlin_project.domain.calculator.DoseResult?>(null) }
+    var doseResult by remember {
+        mutableStateOf<com.example.kotlin_project.domain.calculator.DoseResult?>(
+            null
+        )
+    }
     var insulinExpanded by remember { mutableStateOf(false) }
     var periodExpanded by remember { mutableStateOf(false) }
 
@@ -55,11 +59,27 @@ fun PlateScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        Text(text = stringResource(R.string.my_plate_title), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(R.string.my_plate_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 },
-                navigationIcon = { IconButton(onClick = onBackClick) { Text("←", fontSize = 24.sp) } },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Text(
+                            "←",
+                            fontSize = 24.sp
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         }
@@ -73,11 +93,32 @@ fun PlateScreen(
                 val totalCarbs = plateItems.sumOf { it.carbsInPortion }
                 val totalXE = plateItems.sumOf { it.xe }
                 item {
-                    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Column {
-                                Text(text = "${String.format("%.0f", totalCarbs)}g carbs = ${String.format("%.2f", totalXE)} XE", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                                Text(text = "${plateItems.size} dishes", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(
+                                    text = "${
+                                        String.format(
+                                            "%.0f",
+                                            totalCarbs
+                                        )
+                                    }g carbs = ${String.format("%.2f", totalXE)} XE",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "${plateItems.size} dishes",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
                     }
@@ -86,8 +127,14 @@ fun PlateScreen(
 
             if (plateItems.isEmpty()) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
-                        Text(stringResource(R.string.plate_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(100.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            stringResource(R.string.plate_empty),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             } else {
@@ -104,7 +151,14 @@ fun PlateScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    trailingIcon = { TextButton(onClick = { }) { Text(stringResource(R.string.sync_cgm), fontSize = 12.sp) } }
+                    trailingIcon = {
+                        TextButton(onClick = { }) {
+                            Text(
+                                stringResource(R.string.sync_cgm),
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
                 )
             }
 
@@ -116,14 +170,37 @@ fun PlateScreen(
                     glucoseValue in 4.0..10.0 -> GlucoseNormal
                     else -> GlucoseWarning
                 }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    GlucoseLegendItem(color = GlucoseNormal, range = stringResource(R.string.glucose_range_normal))
-                    GlucoseLegendItem(color = GlucoseWarning, range = stringResource(R.string.glucose_range_warning))
-                    GlucoseLegendItem(color = GlucoseDanger, range = stringResource(R.string.glucose_range_danger))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    GlucoseLegendItem(
+                        color = GlucoseNormal,
+                        range = stringResource(R.string.glucose_range_normal)
+                    )
+                    GlucoseLegendItem(
+                        color = GlucoseWarning,
+                        range = stringResource(R.string.glucose_range_warning)
+                    )
+                    GlucoseLegendItem(
+                        color = GlucoseDanger,
+                        range = stringResource(R.string.glucose_range_danger)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     if (glucoseValue != null) {
-                        Text(text = String.format("%.1f", glucoseValue), color = glucoseColor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(text = stringResource(R.string.glucose_current), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 4.dp))
+                        Text(
+                            text = String.format("%.1f", glucoseValue),
+                            color = glucoseColor,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = stringResource(R.string.glucose_current),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
                     }
                 }
             }
@@ -131,16 +208,23 @@ fun PlateScreen(
             item {
                 val insulinOptions = settings.availableInsulins
 
-                ExposedDropdownMenuBox(expanded = insulinExpanded, onExpandedChange = { insulinExpanded = !insulinExpanded }) {
+                ExposedDropdownMenuBox(
+                    expanded = insulinExpanded,
+                    onExpandedChange = { insulinExpanded = !insulinExpanded }) {
                     OutlinedTextField(
                         value = selectedInsulin,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.insulin_label)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = insulinExpanded) },
-                        modifier = Modifier.fillMaxWidth().menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true)
+                        modifier = Modifier.fillMaxWidth().menuAnchor(
+                            type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                            enabled = true
+                        )
                     )
-                    ExposedDropdownMenu(expanded = insulinExpanded, onDismissRequest = { insulinExpanded = false }) {
+                    ExposedDropdownMenu(
+                        expanded = insulinExpanded,
+                        onDismissRequest = { insulinExpanded = false }) {
                         insulinOptions.forEach { insulin ->
                             DropdownMenuItem(
                                 text = { Text(insulin) },
@@ -161,22 +245,30 @@ fun PlateScreen(
                     "Lunch" to R.string.lunch,
                     "Dinner" to R.string.dinner
                 )
-                val currentPeriodResId = periods.find { it.first == mealPeriod }?.second ?: R.string.lunch
+                val currentPeriodResId =
+                    periods.find { it.first == mealPeriod }?.second ?: R.string.lunch
 
-                ExposedDropdownMenuBox(expanded = periodExpanded, onExpandedChange = { periodExpanded = !periodExpanded }) {
+                ExposedDropdownMenuBox(
+                    expanded = periodExpanded,
+                    onExpandedChange = { periodExpanded = !periodExpanded }) {
                     OutlinedTextField(
                         value = stringResource(currentPeriodResId),
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.meal_period)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = periodExpanded) },
-                        modifier = Modifier.fillMaxWidth().menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                        modifier = Modifier.fillMaxWidth()
+                            .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
                     )
-                    ExposedDropdownMenu(expanded = periodExpanded, onDismissRequest = { periodExpanded = false }) {
+                    ExposedDropdownMenu(
+                        expanded = periodExpanded,
+                        onDismissRequest = { periodExpanded = false }) {
                         periods.forEach { (key, resId) ->
                             DropdownMenuItem(
                                 text = { Text(stringResource(resId)) },
-                                onClick = { viewModel.updateMealPeriod(key); periodExpanded = false }
+                                onClick = {
+                                    viewModel.updateMealPeriod(key); periodExpanded = false
+                                }
                             )
                         }
                     }
@@ -184,13 +276,29 @@ fun PlateScreen(
             }
 
             item {
-                Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "⚡", fontSize = 20.sp, modifier = Modifier.padding(end = 8.dp))
-                            Text(stringResource(R.string.sports_mode), style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                text = "⚡",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(
+                                stringResource(R.string.sports_mode),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
-                        Switch(checked = isSportsMode, onCheckedChange = { viewModel.toggleSportsMode() })
+                        Switch(
+                            checked = isSportsMode,
+                            onCheckedChange = { viewModel.toggleSportsMode() })
                     }
                 }
             }
@@ -210,28 +318,54 @@ fun PlateScreen(
                     enabled = plateItems.isNotEmpty() && glucoseText.isNotEmpty(),
                     shape = MaterialTheme.shapes.large
                 ) {
-                    Text(stringResource(R.string.calculate_dose), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.calculate_dose),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
             doseResult?.let { result ->
                 item {
                     if (result.isLowGlucose) {
-                        Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = WarningOrange)) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = WarningOrange)
+                        ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text(text = stringResource(R.string.warning_title), fontWeight = FontWeight.Bold, color = WarningOrangeText)
+                                Text(
+                                    text = stringResource(R.string.warning_title),
+                                    fontWeight = FontWeight.Bold,
+                                    color = WarningOrangeText
+                                )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(text = result.warning ?: "", color = WarningOrangeText)
                             }
                         }
                     } else {
-                        Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        ) {
                             Column(modifier = Modifier.padding(20.dp)) {
-                                Text(text = stringResource(R.string.meal_bolus, result.mealBolus), style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text = stringResource(R.string.meal_bolus, result.mealBolus),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = stringResource(R.string.correction, result.correction), style = MaterialTheme.typography.bodyLarge)
+                                Text(
+                                    text = stringResource(R.string.correction, result.correction),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                                 Spacer(modifier = Modifier.height(12.dp))
-                                Text(text = stringResource(R.string.total_dose, result.totalDose), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, fontSize = 32.sp)
+                                Text(
+                                    text = stringResource(R.string.total_dose, result.totalDose),
+                                    style = MaterialTheme.typography.headlineLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 32.sp
+                                )
                             }
                         }
                     }
@@ -246,7 +380,11 @@ fun PlateScreen(
                         shape = MaterialTheme.shapes.large,
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
-                        Text(stringResource(R.string.confirm_injection), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            stringResource(R.string.confirm_injection),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -259,21 +397,55 @@ fun GlucoseLegendItem(color: Color, range: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(color))
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = range, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text = range,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
 @Composable
 fun PlateItemCard(item: PlateItem, onRemove: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = item.dish.getDisplayName(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(text = "${item.weightGrams}g • ${String.format("%.0f", item.carbsInPortion)}g carbs", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = item.dish.getDisplayName(),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${item.weightGrams}g • ${
+                        String.format(
+                            "%.0f",
+                            item.carbsInPortion
+                        )
+                    }g carbs",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            Text(text = String.format("%.2f XE", item.xe), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(end = 8.dp))
+            Text(
+                text = String.format("%.2f XE", item.xe),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(end = 8.dp)
+            )
             IconButton(onClick = onRemove) {
-                Icon(Icons.Default.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.error)
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Remove",
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

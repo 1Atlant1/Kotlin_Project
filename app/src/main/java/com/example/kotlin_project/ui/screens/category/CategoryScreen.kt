@@ -78,7 +78,11 @@ fun CategoryScreen(
                 onClick = onAddDishClick,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add dish", tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Add dish",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     ) { paddingValues ->
@@ -128,7 +132,10 @@ fun CategoryScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(stringResource(R.string.no_dishes_found), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        stringResource(R.string.no_dishes_found),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             } else {
                 LazyColumn(
@@ -190,7 +197,11 @@ fun CategoryScreen(
                         onEditDishClick(selectedDish!!.id)
                     }
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.edit))
                 }
@@ -205,7 +216,11 @@ fun CategoryScreen(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.delete))
                 }
@@ -220,7 +235,14 @@ fun CategoryScreen(
                 selectedDish = null
             },
             title = { Text(stringResource(R.string.delete_dish_title)) },
-            text = { Text(stringResource(R.string.delete_dish_confirmation, selectedDish!!.getDisplayName())) },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.delete_dish_confirmation,
+                        selectedDish!!.getDisplayName()
+                    )
+                )
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -306,7 +328,10 @@ fun DishItemCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.primaryContainer) {
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.primaryContainer
+            ) {
                 Text(
                     text = String.format("%.2fXE", xe),
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

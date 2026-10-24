@@ -36,7 +36,10 @@ abstract class AppDatabase : RoomDatabase() {
                             super.onCreate(db)
                             INSTANCE?.let { database ->
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    populateDatabase(database.dishDao(), database.insulinProfileDao())
+                                    populateDatabase(
+                                        database.dishDao(),
+                                        database.insulinProfileDao()
+                                    )
                                 }
                             }
                         }

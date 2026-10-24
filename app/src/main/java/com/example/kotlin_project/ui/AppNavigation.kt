@@ -42,13 +42,15 @@ fun AppNavigation(dishDao: DishDao) {
     val plateViewModel: PlateViewModel = viewModel()
     val settingsViewModel: SettingsViewModel = viewModel()
 
-    val showBottomBar = currentRoute == "home" || currentRoute == "plate" || currentRoute == "settings"
+    val showBottomBar =
+        currentRoute == "home" || currentRoute == "plate" || currentRoute == "settings"
 
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar {
-                    val items = listOf(BottomNavItem.Home, BottomNavItem.MyPlate, BottomNavItem.Settings)
+                    val items =
+                        listOf(BottomNavItem.Home, BottomNavItem.MyPlate, BottomNavItem.Settings)
                     items.forEach { item ->
                         NavigationBarItem(
                             icon = { Icon(item.icon, contentDescription = null) },
@@ -75,7 +77,8 @@ fun AppNavigation(dishDao: DishDao) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") {
-                val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(dishDao))
+                val homeViewModel: HomeViewModel =
+                    viewModel(factory = HomeViewModelFactory(dishDao))
                 HomeScreen(
                     viewModel = homeViewModel,
                     onCategoryClick = { navController.navigate("category/$it") },
@@ -95,7 +98,8 @@ fun AppNavigation(dishDao: DishDao) {
                 )
             }
             composable("dish/{dishId}") { backStackEntry ->
-                val dishId = (backStackEntry.arguments?.getString("dishId") ?: "0").toIntOrNull() ?: 0
+                val dishId =
+                    (backStackEntry.arguments?.getString("dishId") ?: "0").toIntOrNull() ?: 0
                 DishScreen(
                     dishDao = dishDao,
                     dishId = dishId,
@@ -116,7 +120,8 @@ fun AppNavigation(dishDao: DishDao) {
                 )
             }
             composable("edit_dish/{dishId}") { backStackEntry ->
-                val dishId = (backStackEntry.arguments?.getString("dishId") ?: "0").toIntOrNull() ?: 0
+                val dishId =
+                    (backStackEntry.arguments?.getString("dishId") ?: "0").toIntOrNull() ?: 0
                 EditDishScreen(
                     dishDao = dishDao,
                     dishId = dishId,

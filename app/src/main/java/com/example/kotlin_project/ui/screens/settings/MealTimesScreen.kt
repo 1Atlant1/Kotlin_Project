@@ -104,10 +104,18 @@ fun MealTimesScreen(
                     startTime = settings.mealTimes[meal]?.first ?: "06:00",
                     endTime = settings.mealTimes[meal]?.second ?: "11:00",
                     onStartChange = { start ->
-                        viewModel.updateMealTime(meal, start, settings.mealTimes[meal]?.second ?: "11:00")
+                        viewModel.updateMealTime(
+                            meal,
+                            start,
+                            settings.mealTimes[meal]?.second ?: "11:00"
+                        )
                     },
                     onEndChange = { end ->
-                        viewModel.updateMealTime(meal, settings.mealTimes[meal]?.first ?: "06:00", end)
+                        viewModel.updateMealTime(
+                            meal,
+                            settings.mealTimes[meal]?.first ?: "06:00",
+                            end
+                        )
                     }
                 )
             }

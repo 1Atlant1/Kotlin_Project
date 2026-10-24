@@ -37,17 +37,35 @@ class PlateViewModel : ViewModel() {
     )
 
     fun addDishToPlate(dish: Dish, weightGrams: Int) {
-        _plateItems.update { currentItems -> currentItems + PlateItem(dish = dish, weightGrams = weightGrams) }
+        _plateItems.update { currentItems ->
+            currentItems + PlateItem(
+                dish = dish,
+                weightGrams = weightGrams
+            )
+        }
     }
 
     fun removeDishFromPlate(index: Int) {
-        _plateItems.update { currentItems -> currentItems.toMutableList().apply { removeAt(index) } }
+        _plateItems.update { currentItems ->
+            currentItems.toMutableList().apply { removeAt(index) }
+        }
     }
 
-    fun updateGlucose(value: String) { _glucose.value = value }
-    fun updateMealPeriod(period: String) { _mealPeriod.value = period }
-    fun toggleSportsMode() { _isSportsMode.update { !it } }
-    fun updateSelectedInsulin(insulin: String) { _selectedInsulin.value = insulin }
+    fun updateGlucose(value: String) {
+        _glucose.value = value
+    }
+
+    fun updateMealPeriod(period: String) {
+        _mealPeriod.value = period
+    }
+
+    fun toggleSportsMode() {
+        _isSportsMode.update { !it }
+    }
+
+    fun updateSelectedInsulin(insulin: String) {
+        _selectedInsulin.value = insulin
+    }
 
     fun calculateDose(
         targetGlucose: Double,
@@ -73,5 +91,7 @@ class PlateViewModel : ViewModel() {
         )
     }
 
-    fun clearPlate() { _plateItems.value = emptyList() }
+    fun clearPlate() {
+        _plateItems.value = emptyList()
+    }
 }

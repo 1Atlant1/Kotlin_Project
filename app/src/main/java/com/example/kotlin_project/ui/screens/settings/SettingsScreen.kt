@@ -215,7 +215,12 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
                     }
                     HorizontalDivider()
                     DropdownMenuItem(
-                        text = { Text(stringResource(R.string.add_custom_insulin), color = MaterialTheme.colorScheme.primary) },
+                        text = {
+                            Text(
+                                stringResource(R.string.add_custom_insulin),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         onClick = {
                             expanded = false
                             showAddDialog = true
@@ -288,7 +293,11 @@ fun ThemeSelector(viewModel: SettingsViewModel) {
                     onClick = { viewModel.setDarkTheme(false) },
                     label = { Text(stringResource(R.string.light_theme)) },
                     leadingIcon = {
-                        if (!settings.isDarkTheme) Icon(Icons.Default.Check, null, modifier = Modifier.size(18.dp))
+                        if (!settings.isDarkTheme) Icon(
+                            Icons.Default.Check,
+                            null,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 )
                 FilterChip(
@@ -296,7 +305,11 @@ fun ThemeSelector(viewModel: SettingsViewModel) {
                     onClick = { viewModel.setDarkTheme(true) },
                     label = { Text(stringResource(R.string.dark_theme)) },
                     leadingIcon = {
-                        if (settings.isDarkTheme) Icon(Icons.Default.Check, null, modifier = Modifier.size(18.dp))
+                        if (settings.isDarkTheme) Icon(
+                            Icons.Default.Check,
+                            null,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 )
             }
@@ -319,14 +332,21 @@ fun LanguageSelector(viewModel: SettingsViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(stringResource(R.string.language_label), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                stringResource(R.string.language_label),
+                style = MaterialTheme.typography.bodyLarge
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(
                     selected = settings.language == "EN",
                     onClick = { viewModel.updateLanguage("EN") },
                     label = { Text("EN") },
                     leadingIcon = {
-                        if (settings.language == "EN") Icon(Icons.Default.Check, null, modifier = Modifier.size(18.dp))
+                        if (settings.language == "EN") Icon(
+                            Icons.Default.Check,
+                            null,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 )
                 FilterChip(
@@ -334,7 +354,11 @@ fun LanguageSelector(viewModel: SettingsViewModel) {
                     onClick = { viewModel.updateLanguage("RU") },
                     label = { Text("RU") },
                     leadingIcon = {
-                        if (settings.language == "RU") Icon(Icons.Default.Check, null, modifier = Modifier.size(18.dp))
+                        if (settings.language == "RU") Icon(
+                            Icons.Default.Check,
+                            null,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 )
             }
