@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EveryDayDia</string>
+
+    <string name="nav_home">Главная</string>
+    <string name="nav_my_plate">Моя тарелка</string>
+    <string name="nav_settings">Настройки</string>
+
+
+    <string name="home_title">Что в вашей тарелке?</string>
+    <string name="home_subtitle">Выберите категорию для подсчёта углеводов.</string>
+    <string name="xe_info">1 ХЕ = 12г углеводов</string>
+    <string name="dishes_count">%d блюд</string>
+
+
+    <string name="category_soups">Супы</string>
+    <string name="category_hot_dishes">Горячие блюда</string>
+    <string name="category_sweets">Сладости</string>
+    <string name="category_drinks">Напитки</string>
+    <string name="category_fruits">Фрукты</string>
+    <string name="category_vegetables">Овощи</string>
+    <string name="category_dairy">Молочные продукты</string>
+    <string name="category_bread_grains">Хлеб и крупы</string>
+
+
+    <string name="search_dish">Поиск блюда</string>
+    <string name="no_dishes_found">Блюда не найдены</string>
+    <string name="values_per_100g">Значения на 100г</string>
+    <string name="select_dish_hint">Выберите блюдо, чтобы указать вес порции.</string>
+
+
+    <string name="nutrition_per_100g">Пищевая ценность на 100г</string>
+    <string name="carbs">Углеводы</string>
+    <string name="protein">Белки</string>
+    <string name="fat">Жиры</string>
+    <string name="kcal">Ккал</string>
+    <string name="portion_weight_g">Вес порции (г)</string>
+    <string name="portion_example">например, 250</string>
+    <string name="your_portion">Ваша порция: %d г</string>
+    <string name="carbs_in_portion">Углеводы: %.1f г</string>
+    <string name="xe_result">%.2f ХЕ</string>
+    <string name="add_to_plate">Добавить в тарелку</string>
+
+    <string name="my_plate_title">Моя тарелка</string>
+    <string name="plate_empty">Тарелка пуста. Добавьте блюда.</string>
+    <string name="glucose_label">Глюкоза</string>
+    <string name="sync_cgm">Синхр. с CGM</string>
+    <string name="glucose_current">текущий</string>
+    <string name="glucose_range_normal">4–10</string>
+    <string name="glucose_range_warning">10.1–13.9</string>
+    <string name="glucose_range_danger">&gt;13.9 или &lt;4</string>
+    <string name="insulin_label">Инсулин</string>
+    <string name="meal_period">Период приёма пищи</string>
+    <string name="sports_mode">Режим спорт</string>
+    <string name="calculate_dose">Рассчитать дозу</string>
+    <string name="meal_bolus">Болюс на еду: %.2f ЕД</string>
+    <string name="correction">Коррекция: %.2f ЕД</string>
+    <string name="total_dose">ИТОГОВАЯ ДОЗА: %.2f ЕД</string>
+    <string name="confirm_injection">Подтвердить инъекцию</string>
+    <string name="warning_title">⚠ Предупреждение</string>
+    <string name="low_glucose_warning">Сахар ниже 3.9 ммоль/л. Съешьте 1-2 ХЕ быстрых углеводов, подождите 15 минут и повторите расчёт.</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="target_glucose">Целевой сахар</string>
+    <string name="insulin_sensitivity">Чувствительность к инсулину</string>
+    <string name="meal_times">Время приёмов пищи</string>
+    <string name="carb_ratios">Углеводные коэффициенты</string>
+    <string name="theme_label">Тема</string>
+    <string name="language_label">Язык</string>
+    <string name="light_theme">Светлая</string>
+    <string name="dark_theme">Тёмная</string>
+    <string name="consult_doctor">Проконсультируйтесь с врачом по параметрам дозирования.</string>
+
+
+    <string name="meal_times_title">Время приёмов пищи</string>
+    <string name="meal_times_subtitle">Установите обычное время для каждого приёма пищи.</string>
+    <string name="breakfast">Завтрак</string>
+    <string name="lunch">Обед</string>
+    <string name="dinner">Ужин</string>
+    <string name="start_time">Начало</string>
+    <string name="end_time">Конец</string>
+    <string name="time_selects_factor">Время определяет коэффициент для вашего приёма пищи.</string>
+    <string name="save">Сохранить</string>
+
+
+    <string name="carb_ratios_title">Углеводные коэффициенты</string>
+    <string name="carb_ratios_subtitle">Единицы инсулина на 1 ХЕ для каждого приёма пищи.</string>
+    <string name="normal_mode">Обычный</string>
+    <string name="sports_mode_label">Спорт</string>
+    <string name="u_xe_unit">ЕД/ХЕ</string>
+    <string name="sports_values_hint">Значения для спорта используются при включённом режиме Спорт.</string>
+
+
+    <string name="insulin_list">Список инсулинов</string>
+    <string name="add_custom_insulin">Добавить свой инсулин...</string>
+    <string name="add_insulin_title">Добавить свой инсулин</string>
+    <string name="insulin_name_label">Название инсулина</string>
+    <string name="add">Добавить</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="add_dish_title">Добавить блюдо</string>
+    <string name="dish_name_en">Название (English)</string>
+    <string name="dish_name_ru">Название (Русский)</string>
+    <string name="category">Категория</string>
+    <string name="food">Еда</string>
+    <string name="drink">Напиток</string>
+    <string name="add_photo_hint">Нажмите, чтобы добавить фото</string>
+    <string name="carbs_required">Обязательно для расчёта ХЕ</string>
+    <string name="borderline_warning">Сахар на нижней границе. Рекомендуется снизить дозу на 30%.</string>
+    <string name="dish_actions_hint">Долгое нажатие для редактирования или удаления</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_dish_title">Удалить блюдо?</string>
+    <string name="delete_dish_confirmation">Вы уверены, что хотите удалить %s?</string>
+    <string name="edit_dish_title">Редактировать блюдо</string>
+    <string name="carbs_per_100g_format">%1$s г углеводов/100г</string>
+    <string name="dishes_count_format">%d блюд</string>
+</resources>
