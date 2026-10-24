@@ -15,16 +15,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.theme.InfoGreen
 import com.example.kotlin_project.ui.theme.InfoGreenText
+import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 import com.example.kotlin_project.ui.utils.getDisplayName
 import kotlinx.coroutines.launch
 
@@ -57,7 +61,7 @@ fun CategoryScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = categoryName,
+                        text = getCategoryDisplayName(categoryName),
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
@@ -105,16 +109,14 @@ fun CategoryScreen(
                     focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
-
             Spacer(modifier = Modifier.height(12.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${dishes.size} dishes",
+                    text = stringResource(R.string.dishes_count_format, dishes.size),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -124,9 +126,7 @@ fun CategoryScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
             if (filteredDishes.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -154,7 +154,6 @@ fun CategoryScreen(
                     }
                 }
             }
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -181,7 +180,6 @@ fun CategoryScreen(
             }
         }
     }
-
     if (showEditDialog && selectedDish != null) {
         AlertDialog(
             onDismissRequest = {
@@ -227,7 +225,6 @@ fun CategoryScreen(
             }
         )
     }
-
     if (showDeleteDialog && selectedDish != null) {
         AlertDialog(
             onDismissRequest = {
@@ -278,7 +275,6 @@ fun DishItemCard(
     onLongClick: () -> Unit
 ) {
     val xe = dish.carbsPer100g / 12.0
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -297,22 +293,31 @@ fun DishItemCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                modifier = Modifier.size(60.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = dish.name.take(1),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+            if (!dish.imagePath.isNullOrBlank()) {
+                AsyncImage(
+                    model = dish.imagePath,
+                    contentDescription = dish.getDisplayName(),
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(MaterialTheme.shapes.medium),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.size(60.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = dish.name.take(1),
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
-
             Spacer(modifier = Modifier.width(12.dp))
-
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = dish.getDisplayName(),
@@ -325,9 +330,7 @@ fun DishItemCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
             Spacer(modifier = Modifier.width(12.dp))
-
             Surface(
                 shape = MaterialTheme.shapes.small,
                 color = MaterialTheme.colorScheme.primaryContainer

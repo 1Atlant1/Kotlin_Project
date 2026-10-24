@@ -114,4 +114,5 @@
     <string name="delete_dish_confirmation">Вы уверены, что хотите удалить %s?</string>
     <string name="edit_dish_title">Редактировать блюдо</string>
     <string name="carbs_per_100g_format">%1$s г углеводов/100г</string>
+    <string name="dishes_count_format">%d блюд</string>
 </resources>

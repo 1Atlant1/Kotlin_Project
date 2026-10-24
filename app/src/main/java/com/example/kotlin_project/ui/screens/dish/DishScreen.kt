@@ -1,11 +1,8 @@
 package com.example.kotlin_project.ui.screens.dish
 
-import coil.compose.AsyncImage
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14,14 +11,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
+import com.example.kotlin_project.ui.utils.getDisplayName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +43,7 @@ fun DishScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(dish?.name ?: "Dish", fontWeight = FontWeight.Bold) },
+                title = { Text(dish?.getDisplayName() ?: "Dish", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -71,11 +72,10 @@ fun DishScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                val currentDish = dish
-                if (currentDish != null && currentDish.imagePath != null && currentDish.imagePath.isNotBlank()) {
+                if (!dish!!.imagePath.isNullOrBlank()) {
                     AsyncImage(
-                        model = currentDish.imagePath,
-                        contentDescription = currentDish.name,
+                        model = dish!!.imagePath,
+                        contentDescription = dish!!.getDisplayName(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -83,6 +83,7 @@ fun DishScreen(
                         contentScale = ContentScale.Crop
                     )
                 }
+
                 NutritionCard(dish = dish!!)
 
                 OutlinedTextField(

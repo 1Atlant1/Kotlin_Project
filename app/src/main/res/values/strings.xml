@@ -96,5 +96,6 @@
     <string name="delete_dish_confirmation">Are you sure you want to delete %s?</string>
     <string name="edit_dish_title">Edit Dish</string>
     <string name="carbs_per_100g_format">%1$s g carbs/100g</string>
+    <string name="dishes_count_format">%d dishes</string>
 
 </resources>
