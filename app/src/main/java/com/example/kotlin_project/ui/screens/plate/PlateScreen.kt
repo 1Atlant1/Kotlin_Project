@@ -306,9 +306,13 @@ fun PlateScreen(
             item {
                 Button(
                     onClick = {
+                        val carbRatioKey = if (isSportsMode) "${mealPeriod}_sport" else mealPeriod
+                        val carbRatio = settings.carbRatios[carbRatioKey] ?: 1.3
+
                         val result = viewModel.calculateDose(
                             targetGlucose = settings.targetGlucose,
                             insulinSensitivity = settings.insulinSensitivity,
+                            carbRatio = carbRatio,
                             lowGlucoseWarning = lowGlucoseWarningText,
                             borderlineWarning = borderlineWarningText
                         )
@@ -324,6 +328,7 @@ fun PlateScreen(
                         fontWeight = FontWeight.Bold
                     )
                 }
+
             }
 
             doseResult?.let { result ->

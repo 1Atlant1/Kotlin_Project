@@ -27,21 +27,9 @@ class PlateViewModel : ViewModel() {
     private val _selectedInsulin = MutableStateFlow("NovoRapid")
     val selectedInsulin: StateFlow<String> = _selectedInsulin.asStateFlow()
 
-    private val carbRatios = mapOf(
-        "Breakfast" to 1.5,
-        "Lunch" to 1.3,
-        "Dinner" to 1.4,
-        "Breakfast_sport" to 1.0,
-        "Lunch_sport" to 1.0,
-        "Dinner_sport" to 1.1
-    )
-
     fun addDishToPlate(dish: Dish, weightGrams: Int) {
         _plateItems.update { currentItems ->
-            currentItems + PlateItem(
-                dish = dish,
-                weightGrams = weightGrams
-            )
+            currentItems + PlateItem(dish = dish, weightGrams = weightGrams)
         }
     }
 
@@ -70,20 +58,17 @@ class PlateViewModel : ViewModel() {
     fun calculateDose(
         targetGlucose: Double,
         insulinSensitivity: Double,
+        carbRatio: Double,
         lowGlucoseWarning: String,
         borderlineWarning: String
     ): DoseResult {
         val currentGlucose = _glucose.value.toDoubleOrNull() ?: 0.0
-        val period = _mealPeriod.value
-        val isSports = _isSportsMode.value
-        val carbRatioKey = if (isSports) "${period}_sport" else period
-        val carbRatio = carbRatios[carbRatioKey] ?: 1.3
 
         return InsulinCalculator.calculateDose(
             plateItems = _plateItems.value,
             currentGlucose = currentGlucose,
             carbRatio = carbRatio,
-            isSportsMode = isSports,
+            isSportsMode = _isSportsMode.value,
             targetGlucose = targetGlucose,
             insulinSensitivity = insulinSensitivity,
             lowGlucoseWarning = lowGlucoseWarning,
