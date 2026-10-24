@@ -129,12 +129,27 @@ fun PlateScreen(
             }
 
             item {
-                val insulinOptions = listOf("NovoRapid", "Humalog", "Apidra")
+                val insulinOptions = settings.availableInsulins
+
                 ExposedDropdownMenuBox(expanded = insulinExpanded, onExpandedChange = { insulinExpanded = !insulinExpanded }) {
-                    OutlinedTextField(value = selectedInsulin, onValueChange = {}, readOnly = true, label = { Text(stringResource(R.string.insulin_label)) }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = insulinExpanded) }, modifier = Modifier.fillMaxWidth().menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true))
+                    OutlinedTextField(
+                        value = selectedInsulin,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.insulin_label)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = insulinExpanded) },
+                        modifier = Modifier.fillMaxWidth().menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true)
+                    )
                     ExposedDropdownMenu(expanded = insulinExpanded, onDismissRequest = { insulinExpanded = false }) {
                         insulinOptions.forEach { insulin ->
-                            DropdownMenuItem(text = { Text(insulin) }, onClick = { viewModel.updateSelectedInsulin(insulin); insulinExpanded = false })
+                            DropdownMenuItem(
+                                text = { Text(insulin) },
+                                onClick = {
+                                    viewModel.updateSelectedInsulin(insulin)
+                                    settingsViewModel.updateSelectedInsulin(insulin)
+                                    insulinExpanded = false
+                                }
+                            )
                         }
                     }
                 }

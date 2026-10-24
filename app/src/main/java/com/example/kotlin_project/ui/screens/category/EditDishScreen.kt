@@ -1,19 +1,29 @@
 package com.example.kotlin_project.ui.screens.category
 
-import androidx.compose.ui.Alignment
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.DishDao
 import kotlinx.coroutines.launch
@@ -38,7 +48,14 @@ fun EditDishScreen(
     var carbsText by remember { mutableStateOf("") }
     var caloriesText by remember { mutableStateOf("") }
 
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var showValidationError by remember { mutableStateOf(false) }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri
+    }
 
     LaunchedEffect(dish) {
         dish?.let {
@@ -50,6 +67,9 @@ fun EditDishScreen(
             fatText = it.fatPer100g.toString()
             carbsText = it.carbsPer100g.toString()
             caloriesText = it.caloriesPer100g.toString()
+            if (!it.imagePath.isNullOrBlank()) {
+                selectedImageUri = Uri.parse(it.imagePath)
+            }
         }
     }
 
@@ -86,7 +106,8 @@ fun EditDishScreen(
                                     proteinPer100g = proteinText.toDoubleOrNull() ?: 0.0,
                                     fatPer100g = fatText.toDoubleOrNull() ?: 0.0,
                                     caloriesPer100g = caloriesText.toDoubleOrNull() ?: 0.0,
-                                    isDrink = isDrink
+                                    isDrink = isDrink,
+                                    imagePath = selectedImageUri?.toString()
                                 )
                                 scope.launch {
                                     dishDao.insertDish(updatedDish)
@@ -117,6 +138,37 @@ fun EditDishScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState()).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clickable { imagePickerLauncher.launch("image/*") },
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .border(2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (selectedImageUri != null) {
+                            AsyncImage(
+                                model = selectedImageUri,
+                                contentDescription = "Dish photo",
+                                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(Icons.Default.AddAPhoto, null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.outline)
+                                Spacer(Modifier.height(8.dp))
+                                Text(stringResource(R.string.add_photo_hint), color = MaterialTheme.colorScheme.outline)
+                            }
+                        }
+                    }
+                }
+
                 OutlinedTextField(value = nameEn, onValueChange = { nameEn = it }, label = { Text(stringResource(R.string.dish_name_en)) }, modifier = Modifier.fillMaxWidth(), singleLine = true, isError = showValidationError && nameEn.isBlank())
                 OutlinedTextField(value = nameRu, onValueChange = { nameRu = it }, label = { Text(stringResource(R.string.dish_name_ru)) }, modifier = Modifier.fillMaxWidth(), singleLine = true, isError = showValidationError && nameRu.isBlank())
 
