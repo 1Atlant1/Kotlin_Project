@@ -19,16 +19,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
+import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +51,6 @@ fun AddDishScreen(
     var showCategoryDropdown by remember { mutableStateOf(false) }
     var showValidationError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -60,24 +58,52 @@ fun AddDishScreen(
         selectedImageUri = uri
     }
 
-    val categories = listOf("Soups", "Hot dishes", "Sweets", "Drinks", "Fruits", "Vegetables", "Dairy", "Bread & grains")
+    val categories = listOf(
+        "Soups",
+        "Hot dishes",
+        "Sweets",
+        "Drinks",
+        "Fruits",
+        "Vegetables",
+        "Dairy",
+        "Bread & grains"
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                        Text(text = stringResource(R.string.add_dish_title), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(R.string.add_dish_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 },
-                navigationIcon = { IconButton(onClick = onBackClick) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            "Back"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
         bottomBar = {
             Surface(shadowElevation = 8.dp, color = MaterialTheme.colorScheme.surface) {
-                Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     OutlinedButton(onClick = onBackClick, modifier = Modifier.weight(1f)) {
                         Text(stringResource(R.string.cancel))
                     }
@@ -114,7 +140,8 @@ fun AddDishScreen(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState()).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues)
+                .verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Surface(
@@ -128,16 +155,18 @@ fun AddDishScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .border(2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
+                        .border(
+                            2.dp,
+                            MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                            RoundedCornerShape(12.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (selectedImageUri != null) {
                         AsyncImage(
                             model = selectedImageUri,
                             contentDescription = "Selected dish photo",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(12.dp)),
+                            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
                             contentScale = ContentScale.Crop
                         )
                     } else {
@@ -158,29 +187,109 @@ fun AddDishScreen(
                 }
             }
 
-            OutlinedTextField(value = nameEn, onValueChange = { nameEn = it }, label = { Text(stringResource(R.string.dish_name_en)) }, modifier = Modifier.fillMaxWidth(), singleLine = true, isError = showValidationError && nameEn.isBlank())
-            OutlinedTextField(value = nameRu, onValueChange = { nameRu = it }, label = { Text(stringResource(R.string.dish_name_ru)) }, modifier = Modifier.fillMaxWidth(), singleLine = true, isError = showValidationError && nameRu.isBlank())
+            OutlinedTextField(
+                value = nameEn,
+                onValueChange = { nameEn = it },
+                label = { Text(stringResource(R.string.dish_name_en)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                isError = showValidationError && nameEn.isBlank()
+            )
+            OutlinedTextField(
+                value = nameRu,
+                onValueChange = { nameRu = it },
+                label = { Text(stringResource(R.string.dish_name_ru)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                isError = showValidationError && nameRu.isBlank()
+            )
 
-            ExposedDropdownMenuBox(expanded = showCategoryDropdown, onExpandedChange = { showCategoryDropdown = !showCategoryDropdown }) {
-                OutlinedTextField(value = selectedCategory, onValueChange = {}, readOnly = true, label = { Text(stringResource(R.string.category)) }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown) }, modifier = Modifier.fillMaxWidth().menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true))
-                ExposedDropdownMenu(expanded = showCategoryDropdown, onDismissRequest = { showCategoryDropdown = false }) {
+            ExposedDropdownMenuBox(
+                expanded = showCategoryDropdown,
+                onExpandedChange = { showCategoryDropdown = !showCategoryDropdown }) {
+                OutlinedTextField(
+                    value = getCategoryDisplayName(selectedCategory),
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text(stringResource(R.string.category)) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCategoryDropdown) },
+                    modifier = Modifier.fillMaxWidth()
+                        .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                )
+                ExposedDropdownMenu(
+                    expanded = showCategoryDropdown,
+                    onDismissRequest = { showCategoryDropdown = false }) {
                     categories.forEach { category ->
-                        DropdownMenuItem(text = { Text(category) }, onClick = { selectedCategory = category; showCategoryDropdown = false })
+                        DropdownMenuItem(
+                            text = { Text(getCategoryDisplayName(category)) },
+                            onClick = {
+                                selectedCategory = category
+                                showCategoryDropdown = false
+                            }
+                        )
                     }
                 }
             }
 
-            Row(modifier = Modifier.fillMaxWidth().padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                FilterChip(selected = !isDrink, onClick = { isDrink = false }, label = { Text(stringResource(R.string.food)) }, modifier = Modifier.weight(1f))
-                FilterChip(selected = isDrink, onClick = { isDrink = true }, label = { Text(stringResource(R.string.drink)) }, modifier = Modifier.weight(1f))
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                FilterChip(
+                    selected = !isDrink,
+                    onClick = { isDrink = false },
+                    label = { Text(stringResource(R.string.food)) },
+                    modifier = Modifier.weight(1f)
+                )
+                FilterChip(
+                    selected = isDrink,
+                    onClick = { isDrink = true },
+                    label = { Text(stringResource(R.string.drink)) },
+                    modifier = Modifier.weight(1f)
+                )
             }
 
-            Text(text = stringResource(R.string.nutrition_per_100g), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(R.string.nutrition_per_100g),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
 
-            OutlinedTextField(value = proteinText, onValueChange = { proteinText = it.filter { ch -> ch.isDigit() || ch == '.' } }, label = { Text(stringResource(R.string.protein)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = fatText, onValueChange = { fatText = it.filter { ch -> ch.isDigit() || ch == '.' } }, label = { Text(stringResource(R.string.fat)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth(), singleLine = true)
-            OutlinedTextField(value = carbsText, onValueChange = { carbsText = it.filter { ch -> ch.isDigit() || ch == '.' } }, label = { Text("${stringResource(R.string.carbs)} *") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth(), singleLine = true, isError = showValidationError && carbsText.isBlank(), supportingText = { if (showValidationError && carbsText.isBlank()) Text(stringResource(R.string.carbs_required)) })
-            OutlinedTextField(value = caloriesText, onValueChange = { caloriesText = it.filter { ch -> ch.isDigit() || ch == '.' } }, label = { Text(stringResource(R.string.kcal)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(
+                value = proteinText,
+                onValueChange = { proteinText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                label = { Text(stringResource(R.string.protein)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            OutlinedTextField(
+                value = fatText,
+                onValueChange = { fatText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                label = { Text(stringResource(R.string.fat)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            OutlinedTextField(
+                value = carbsText,
+                onValueChange = { carbsText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                label = { Text("${stringResource(R.string.carbs)} *") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                isError = showValidationError && carbsText.isBlank(),
+                supportingText = {
+                    if (showValidationError && carbsText.isBlank()) Text(stringResource(R.string.carbs_required))
+                })
+            OutlinedTextField(
+                value = caloriesText,
+                onValueChange = { caloriesText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                label = { Text(stringResource(R.string.kcal)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
 
             Spacer(modifier = Modifier.height(80.dp))
         }
