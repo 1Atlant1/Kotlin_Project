@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -60,8 +61,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.DishDao
+import com.example.kotlin_project.ui.utils.ImageHelper
 import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,11 +87,16 @@ fun EditDishScreen(
     var caloriesText by remember { mutableStateOf("") }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var showValidationError by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        selectedImageUri = uri
+        uri?.let {
+
+            val imagePath = ImageHelper.copyImageToInternalStorage(context, it)
+            selectedImageUri = imagePath?.let { path -> Uri.fromFile(File(path)) }
+        }
     }
 
     LaunchedEffect(dish) {
@@ -160,6 +168,9 @@ fun EditDishScreen(
                     Button(
                         onClick = {
                             if (nameEn.isNotBlank() && nameRu.isNotBlank() && carbsText.isNotBlank() && dish != null) {
+                                if (dish!!.imagePath != selectedImageUri?.path) {
+                                    ImageHelper.deleteImage(context, dish!!.imagePath)
+                                }
                                 val updatedDish = dish!!.copy(
                                     name = nameEn.trim(),
                                     nameRu = nameRu.trim(),
@@ -169,7 +180,7 @@ fun EditDishScreen(
                                     fatPer100g = fatText.toDoubleOrNull() ?: 0.0,
                                     caloriesPer100g = caloriesText.toDoubleOrNull() ?: 0.0,
                                     isDrink = isDrink,
-                                    imagePath = selectedImageUri?.toString()
+                                    imagePath = selectedImageUri?.path
                                 )
                                 scope.launch {
                                     dishDao.insertDish(updatedDish)

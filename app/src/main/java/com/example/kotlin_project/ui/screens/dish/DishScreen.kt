@@ -23,6 +23,7 @@ import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.utils.getDisplayName
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +75,7 @@ fun DishScreen(
             ) {
                 if (!dish!!.imagePath.isNullOrBlank()) {
                     AsyncImage(
-                        model = dish!!.imagePath,
+                        model = File(dish!!.imagePath!!),
                         contentDescription = dish!!.getDisplayName(),
                         modifier = Modifier
                             .fillMaxWidth()

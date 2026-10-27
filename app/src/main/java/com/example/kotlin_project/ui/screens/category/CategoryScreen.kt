@@ -31,6 +31,7 @@ import com.example.kotlin_project.ui.theme.InfoGreenText
 import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 import com.example.kotlin_project.ui.utils.getDisplayName
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -295,7 +296,7 @@ fun DishItemCard(
         ) {
             if (!dish.imagePath.isNullOrBlank()) {
                 AsyncImage(
-                    model = dish.imagePath,
+                    model = File(dish.imagePath!!),
                     contentDescription = dish.getDisplayName(),
                     modifier = Modifier
                         .size(60.dp)

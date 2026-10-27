@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,8 +28,10 @@ import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
+import com.example.kotlin_project.ui.utils.ImageHelper
 import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,10 +55,15 @@ fun AddDishScreen(
     var showValidationError by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
+    val context = LocalContext.current
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        selectedImageUri = uri
+        uri?.let {
+            val imagePath = ImageHelper.copyImageToInternalStorage(context, it)
+            selectedImageUri = imagePath?.let { path -> Uri.fromFile(File(path)) }
+        }
     }
 
     val categories = listOf(
@@ -120,7 +128,7 @@ fun AddDishScreen(
                                     caloriesPer100g = caloriesText.toDoubleOrNull() ?: 0.0,
                                     isDrink = isDrink,
                                     isCustom = true,
-                                    imagePath = selectedImageUri?.toString()
+                                    imagePath = selectedImageUri?.path
                                 )
                                 scope.launch {
                                     dishDao.insertDish(dish)
