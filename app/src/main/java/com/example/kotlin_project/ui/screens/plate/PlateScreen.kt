@@ -42,7 +42,6 @@ fun PlateScreen(
     val cgmSyncResult by viewModel.cgmSyncResult.collectAsState()
     val manualMealPeriod by viewModel.manualMealPeriod.collectAsState()
     val isSportsMode by viewModel.isSportsMode.collectAsState()
-    val selectedInsulin by viewModel.selectedInsulin.collectAsState()
     val settings by settingsViewModel.settings.collectAsState()
     val currentTime by rememberCurrentTime()
     val mealPeriod = manualMealPeriod ?: MealPeriodDetector.detect(settings.mealTimes, currentTime)
@@ -171,7 +170,7 @@ fun PlateScreen(
                     expanded = insulinExpanded,
                     onExpandedChange = { insulinExpanded = !insulinExpanded }) {
                     OutlinedTextField(
-                        value = selectedInsulin,
+                        value = settings.selectedInsulin,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.insulin_label)) },
@@ -188,7 +187,6 @@ fun PlateScreen(
                             DropdownMenuItem(
                                 text = { Text(insulin) },
                                 onClick = {
-                                    viewModel.updateSelectedInsulin(insulin)
                                     settingsViewModel.updateSelectedInsulin(insulin)
                                     insulinExpanded = false
                                 }

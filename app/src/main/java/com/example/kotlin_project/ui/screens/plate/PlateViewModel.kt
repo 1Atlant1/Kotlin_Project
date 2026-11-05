@@ -34,9 +34,6 @@ class PlateViewModel(
     private val _isSportsMode = MutableStateFlow(false)
     val isSportsMode: StateFlow<Boolean> = _isSportsMode.asStateFlow()
 
-    private val _selectedInsulin = MutableStateFlow("NovoRapid")
-    val selectedInsulin: StateFlow<String> = _selectedInsulin.asStateFlow()
-
     fun addDishToPlate(dish: Dish, weightGrams: Int) {
         _plateItems.update { currentItems ->
             currentItems + PlateItem(dish = dish, weightGrams = weightGrams)
@@ -85,10 +82,6 @@ class PlateViewModel(
 
     fun toggleSportsMode() {
         _isSportsMode.update { !it }
-    }
-
-    fun updateSelectedInsulin(insulin: String) {
-        _selectedInsulin.value = insulin
     }
 
     fun calculateDose(
