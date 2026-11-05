@@ -65,6 +65,10 @@ fun PlateScreen(
         }
     }
 
+    LaunchedEffect(plateItems, glucose, mealPeriod, isSportsMode) {
+        doseResult = null
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
