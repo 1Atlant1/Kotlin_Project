@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.domain.calculator.MealPeriodDetector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -217,6 +218,8 @@ fun TimeInputField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isError = MealPeriodDetector.parseTime(value) == null
+
     OutlinedTextField(
         value = value,
         onValueChange = { newValue ->
@@ -226,6 +229,12 @@ fun TimeInputField(
             }
         },
         label = { Text(label) },
+        isError = isError,
+        supportingText = if (isError) {
+            { Text(stringResource(R.string.time_format_error)) }
+        } else {
+            null
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = modifier,
         singleLine = true,

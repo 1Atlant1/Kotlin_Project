@@ -73,6 +73,7 @@
     <string name="dinner">Dinner</string>
     <string name="start_time">Start</string>
     <string name="end_time">End</string>
+    <string name="time_format_error">Format HH:MM</string>
     <string name="time_selects_factor">The time selects the factor for your meal.</string>
     <string name="save">Save</string>
     <string name="carb_ratios_title">Carb ratios</string>
