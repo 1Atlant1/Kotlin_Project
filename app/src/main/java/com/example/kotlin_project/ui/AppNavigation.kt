@@ -34,13 +34,15 @@ import com.example.kotlin_project.ui.screens.settings.SettingsScreen
 import com.example.kotlin_project.ui.screens.settings.SettingsViewModel
 
 @Composable
-fun AppNavigation(dishDao: DishDao) {
+fun AppNavigation(
+    dishDao: DishDao,
+    settingsViewModel: SettingsViewModel
+) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     val plateViewModel: PlateViewModel = viewModel()
-    val settingsViewModel: SettingsViewModel = viewModel()
 
     val showBottomBar =
         currentRoute == "home" || currentRoute == "plate" || currentRoute == "settings"
