@@ -12,6 +12,10 @@ data class DoseResult(
 
 object InsulinCalculator {
 
+    const val LOW_GLUCOSE_THRESHOLD = 3.9
+
+    const val BORDERLINE_GLUCOSE_MAX = 5.0
+
     fun calculateDose(
         plateItems: List<PlateItem>,
         currentGlucose: Double,
@@ -22,7 +26,7 @@ object InsulinCalculator {
         lowGlucoseWarning: String = "Glucose below 3.9 mmol/L. Eat 1-2 XE of fast carbs, wait 15 minutes and recalculate.",
         borderlineWarning: String = "Glucose is on the lower side. Consider reducing dose by 30%."
     ): DoseResult {
-        if (currentGlucose < 3.9) {
+        if (currentGlucose < LOW_GLUCOSE_THRESHOLD) {
             return DoseResult(
                 mealBolus = 0.0,
                 correction = 0.0,
@@ -43,7 +47,7 @@ object InsulinCalculator {
 
         val totalDose = mealBolus + correction
 
-        val warning = if (currentGlucose in 3.9..5.0) {
+        val warning = if (currentGlucose in LOW_GLUCOSE_THRESHOLD..BORDERLINE_GLUCOSE_MAX) {
             borderlineWarning
         } else null
 
