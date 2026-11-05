@@ -45,6 +45,9 @@
     <string name="cgm_sync_outdated">The latest CGM reading is older than %1$d min. Check Juggluco or enter glucose manually.</string>
     <string name="insulin_label">Insulin</string>
     <string name="meal_period">Meal period</string>
+    <string name="meal_period_auto">Detected automatically from the current time</string>
+    <string name="meal_period_manual">Selected manually</string>
+    <string name="meal_period_detect_auto">Detect automatically</string>
     <string name="sports_mode">Sports mode</string>
     <string name="calculate_dose">Calculate dose</string>
     <string name="meal_bolus">Meal bolus: %.2f U</string>

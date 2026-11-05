@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.domain.calculator.MealPeriodDetector
 import com.example.kotlin_project.domain.model.CgmReading
 import com.example.kotlin_project.domain.model.Glucose
 import com.example.kotlin_project.domain.model.PlateItem
@@ -23,7 +24,11 @@ import com.example.kotlin_project.ui.screens.settings.SettingsViewModel
 import com.example.kotlin_project.ui.theme.WarningOrange
 import com.example.kotlin_project.ui.theme.WarningOrangeText
 import com.example.kotlin_project.ui.utils.getDisplayName
+import kotlinx.coroutines.delay
+import java.time.LocalTime
 import java.util.Date
+
+private const val TIME_REFRESH_INTERVAL_MS = 60_000L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,10 +40,12 @@ fun PlateScreen(
     val plateItems by viewModel.plateItems.collectAsState()
     val glucose by viewModel.glucose.collectAsState()
     val cgmSyncResult by viewModel.cgmSyncResult.collectAsState()
-    val mealPeriod by viewModel.mealPeriod.collectAsState()
+    val manualMealPeriod by viewModel.manualMealPeriod.collectAsState()
     val isSportsMode by viewModel.isSportsMode.collectAsState()
     val selectedInsulin by viewModel.selectedInsulin.collectAsState()
     val settings by settingsViewModel.settings.collectAsState()
+    val currentTime by rememberCurrentTime()
+    val mealPeriod = manualMealPeriod ?: MealPeriodDetector.detect(settings.mealTimes, currentTime)
 
     var doseResult by remember {
         mutableStateOf<com.example.kotlin_project.domain.calculator.DoseResult?>(
@@ -46,7 +53,6 @@ fun PlateScreen(
         )
     }
     var insulinExpanded by remember { mutableStateOf(false) }
-    var periodExpanded by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     val lowGlucoseWarningText = stringResource(R.string.low_glucose_warning)
@@ -193,39 +199,12 @@ fun PlateScreen(
             }
 
             item {
-                val periods = listOf(
-                    "Breakfast" to R.string.breakfast,
-                    "Lunch" to R.string.lunch,
-                    "Dinner" to R.string.dinner
+                MealPeriodSelector(
+                    mealPeriod = mealPeriod,
+                    isAutoDetected = manualMealPeriod == null,
+                    onPeriodSelected = viewModel::updateMealPeriod,
+                    onAutoDetectClick = viewModel::resetMealPeriod
                 )
-                val currentPeriodResId =
-                    periods.find { it.first == mealPeriod }?.second ?: R.string.lunch
-
-                ExposedDropdownMenuBox(
-                    expanded = periodExpanded,
-                    onExpandedChange = { periodExpanded = !periodExpanded }) {
-                    OutlinedTextField(
-                        value = stringResource(currentPeriodResId),
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text(stringResource(R.string.meal_period)) },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = periodExpanded) },
-                        modifier = Modifier.fillMaxWidth()
-                            .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
-                    )
-                    ExposedDropdownMenu(
-                        expanded = periodExpanded,
-                        onDismissRequest = { periodExpanded = false }) {
-                        periods.forEach { (key, resId) ->
-                            DropdownMenuItem(
-                                text = { Text(stringResource(resId)) },
-                                onClick = {
-                                    viewModel.updateMealPeriod(key); periodExpanded = false
-                                }
-                            )
-                        }
-                    }
-                }
             }
 
             item {
@@ -347,6 +326,14 @@ fun PlateScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun rememberCurrentTime(): State<LocalTime> = produceState(LocalTime.now()) {
+    while (true) {
+        delay(TIME_REFRESH_INTERVAL_MS)
+        value = LocalTime.now()
     }
 }
 

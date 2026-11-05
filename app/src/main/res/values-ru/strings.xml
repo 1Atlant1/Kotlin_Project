@@ -54,6 +54,9 @@
     <string name="cgm_sync_outdated">Последнее значение CGM старше %1$d мин. Проверьте Juggluco или введите сахар вручную.</string>
     <string name="insulin_label">Инсулин</string>
     <string name="meal_period">Период приёма пищи</string>
+    <string name="meal_period_auto">Определён автоматически по текущему времени</string>
+    <string name="meal_period_manual">Выбран вручную</string>
+    <string name="meal_period_detect_auto">Определять автоматически</string>
     <string name="sports_mode">Режим спорт</string>
     <string name="calculate_dose">Рассчитать дозу</string>
     <string name="meal_bolus">Болюс на еду: %.2f ЕД</string>

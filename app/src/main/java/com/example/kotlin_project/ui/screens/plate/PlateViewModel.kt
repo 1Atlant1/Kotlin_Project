@@ -28,8 +28,8 @@ class PlateViewModel(
     private val _cgmSyncResult = MutableStateFlow<CgmSyncResult?>(null)
     val cgmSyncResult: StateFlow<CgmSyncResult?> = _cgmSyncResult.asStateFlow()
 
-    private val _mealPeriod = MutableStateFlow("Lunch")
-    val mealPeriod: StateFlow<String> = _mealPeriod.asStateFlow()
+    private val _manualMealPeriod = MutableStateFlow<String?>(null)
+    val manualMealPeriod: StateFlow<String?> = _manualMealPeriod.asStateFlow()
 
     private val _isSportsMode = MutableStateFlow(false)
     val isSportsMode: StateFlow<Boolean> = _isSportsMode.asStateFlow()
@@ -76,7 +76,11 @@ class PlateViewModel(
     }
 
     fun updateMealPeriod(period: String) {
-        _mealPeriod.value = period
+        _manualMealPeriod.value = period
+    }
+
+    fun resetMealPeriod() {
+        _manualMealPeriod.value = null
     }
 
     fun toggleSportsMode() {
@@ -110,5 +114,6 @@ class PlateViewModel(
 
     fun clearPlate() {
         _plateItems.value = emptyList()
+        _manualMealPeriod.value = null
     }
 }
