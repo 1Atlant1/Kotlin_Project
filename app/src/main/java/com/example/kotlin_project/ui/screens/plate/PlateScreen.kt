@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -120,18 +121,17 @@ fun PlateScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "${
-                                        String.format(
-                                            "%.0f",
-                                            totalCarbs
-                                        )
-                                    }g carbs = ${String.format("%.2f", totalXE)} XE",
+                                    text = stringResource(R.string.plate_total, totalCarbs, totalXE),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = "${plateItems.size} dishes",
+                                    text = pluralStringResource(
+                                        R.plurals.dishes_count,
+                                        plateItems.size,
+                                        plateItems.size
+                                    ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -383,18 +383,17 @@ fun PlateItemCard(item: PlateItem, onRemove: () -> Unit) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "${item.weightGrams}g • ${
-                        String.format(
-                            "%.0f",
-                            item.carbsInPortion
-                        )
-                    }g carbs",
+                    text = stringResource(
+                        R.string.plate_item_details,
+                        item.weightGrams,
+                        item.carbsInPortion
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Text(
-                text = String.format("%.2f XE", item.xe),
+                text = stringResource(R.string.xe_result, item.xe),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,

@@ -6,8 +6,12 @@
     <string name="nav_settings">Settings</string>
     <string name="home_title">What\'s on your plate?</string>
     <string name="home_subtitle">Choose a category to count your carbs.</string>
+    <string name="app_subtitle">Diabetes Calculator</string>
     <string name="xe_info">1 XE = 12g carbohydrates</string>
-    <string name="dishes_count">%d dishes</string>
+    <plurals name="dishes_count">
+        <item quantity="one">%d dish</item>
+        <item quantity="other">%d dishes</item>
+    </plurals>
     <string name="category_soups">Soups</string>
     <string name="category_hot_dishes">Hot dishes</string>
     <string name="category_sweets">Sweets</string>
@@ -33,6 +37,8 @@
     <string name="add_to_plate">Add to plate</string>
     <string name="my_plate_title">My Plate</string>
     <string name="plate_empty">Plate is empty. Add dishes.</string>
+    <string name="plate_total">%1$.0f g carbs = %2$.2f XE</string>
+    <string name="plate_item_details">%1$d g • %2$.0f g carbs</string>
     <string name="glucose_label">Glucose</string>
     <string name="sync_cgm">Sync CGM</string>
     <string name="glucose_current">• current</string>
@@ -104,6 +110,5 @@
     <string name="delete_dish_confirmation">Are you sure you want to delete %s?</string>
     <string name="edit_dish_title">Edit Dish</string>
     <string name="carbs_per_100g_format">%1$s g carbs/100g</string>
-    <string name="dishes_count_format">%d dishes</string>
 
 </resources>

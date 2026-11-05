@@ -9,8 +9,14 @@
 
     <string name="home_title">Что в вашей тарелке?</string>
     <string name="home_subtitle">Выберите категорию для подсчёта углеводов.</string>
+    <string name="app_subtitle">Калькулятор для диабетиков</string>
     <string name="xe_info">1 ХЕ = 12г углеводов</string>
-    <string name="dishes_count">%d блюд</string>
+    <plurals name="dishes_count">
+        <item quantity="one">%d блюдо</item>
+        <item quantity="few">%d блюда</item>
+        <item quantity="many">%d блюд</item>
+        <item quantity="other">%d блюда</item>
+    </plurals>
 
 
     <string name="category_soups">Супы</string>
@@ -43,6 +49,8 @@
 
     <string name="my_plate_title">Моя тарелка</string>
     <string name="plate_empty">Тарелка пуста. Добавьте блюда.</string>
+    <string name="plate_total">%1$.0f г углеводов = %2$.2f ХЕ</string>
+    <string name="plate_item_details">%1$d г • %2$.0f г углеводов</string>
     <string name="glucose_label">Глюкоза</string>
     <string name="sync_cgm">Синхр. CGM</string>
     <string name="glucose_current">• текущий</string>
@@ -121,5 +129,4 @@
     <string name="delete_dish_confirmation">Вы уверены, что хотите удалить %s?</string>
     <string name="edit_dish_title">Редактировать блюдо</string>
     <string name="carbs_per_100g_format">%1$s г углеводов/100г</string>
-    <string name="dishes_count_format">%d блюд</string>
 </resources>
