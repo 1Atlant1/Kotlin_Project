@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.domain.calculator.DoseResult
 import com.example.kotlin_project.domain.calculator.InsulinCalculator
+import com.example.kotlin_project.domain.model.Glucose
 import com.example.kotlin_project.domain.model.PlateItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +16,8 @@ class PlateViewModel : ViewModel() {
     private val _plateItems = MutableStateFlow<List<PlateItem>>(emptyList())
     val plateItems: StateFlow<List<PlateItem>> = _plateItems.asStateFlow()
 
-    private val _glucose = MutableStateFlow("")
-    val glucose: StateFlow<String> = _glucose.asStateFlow()
+    private val _glucose = MutableStateFlow(GlucoseInput())
+    val glucose: StateFlow<GlucoseInput> = _glucose.asStateFlow()
 
     private val _mealPeriod = MutableStateFlow("Lunch")
     val mealPeriod: StateFlow<String> = _mealPeriod.asStateFlow()
@@ -39,8 +40,10 @@ class PlateViewModel : ViewModel() {
         }
     }
 
-    fun updateGlucose(value: String) {
-        _glucose.value = value
+    fun updateGlucose(text: String) {
+        if (Glucose.isAllowedInput(text)) {
+            _glucose.value = GlucoseInput(text)
+        }
     }
 
     fun updateMealPeriod(period: String) {
@@ -61,8 +64,8 @@ class PlateViewModel : ViewModel() {
         carbRatio: Double,
         lowGlucoseWarning: String,
         borderlineWarning: String
-    ): DoseResult {
-        val currentGlucose = _glucose.value.toDoubleOrNull() ?: 0.0
+    ): DoseResult? {
+        val currentGlucose = _glucose.value.valueMmol ?: return null
 
         return InsulinCalculator.calculateDose(
             plateItems = _plateItems.value,

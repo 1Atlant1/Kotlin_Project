@@ -44,11 +44,11 @@
     <string name="my_plate_title">Моя тарелка</string>
     <string name="plate_empty">Тарелка пуста. Добавьте блюда.</string>
     <string name="glucose_label">Глюкоза</string>
-    <string name="sync_cgm">Синхр. с CGM</string>
-    <string name="glucose_current">текущий</string>
-    <string name="glucose_range_normal">4–10</string>
-    <string name="glucose_range_warning">10.1–13.9</string>
-    <string name="glucose_range_danger">&gt;13.9 или &lt;4</string>
+    <string name="sync_cgm">Синхр. CGM</string>
+    <string name="glucose_current">• текущий</string>
+    <string name="glucose_unit">ммоль/л</string>
+    <string name="glucose_range_outside">&gt;%1$s или &lt;%2$s</string>
+    <string name="glucose_out_of_range">Введите значение от %1$s до %2$s ммоль/л</string>
     <string name="insulin_label">Инсулин</string>
     <string name="meal_period">Период приёма пищи</string>
     <string name="sports_mode">Режим спорт</string>

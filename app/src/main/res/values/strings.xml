@@ -34,11 +34,12 @@
     <string name="my_plate_title">My Plate</string>
     <string name="plate_empty">Plate is empty. Add dishes.</string>
     <string name="glucose_label">Glucose</string>
-    <string name="sync_cgm">Sync from CGM</string>
-    <string name="glucose_current">current</string>
-    <string name="glucose_range_normal">4–10</string>
-    <string name="glucose_range_warning">10.1–13.9</string>
-    <string name="glucose_range_danger">&gt;13.9 or &lt;4</string>
+    <string name="sync_cgm">Sync CGM</string>
+    <string name="glucose_current">• current</string>
+    <string name="glucose_unit">mmol/L</string>
+    <string name="glucose_range_between" translatable="false">%1$s–%2$s</string>
+    <string name="glucose_range_outside">&gt;%1$s or &lt;%2$s</string>
+    <string name="glucose_out_of_range">Enter a value from %1$s to %2$s mmol/L</string>
     <string name="insulin_label">Insulin</string>
     <string name="meal_period">Meal period</string>
     <string name="sports_mode">Sports mode</string>

@@ -1,30 +1,21 @@
 package com.example.kotlin_project.ui.screens.plate
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
 import com.example.kotlin_project.domain.model.PlateItem
 import com.example.kotlin_project.ui.screens.settings.SettingsViewModel
-import com.example.kotlin_project.ui.theme.GlucoseDanger
-import com.example.kotlin_project.ui.theme.GlucoseNormal
-import com.example.kotlin_project.ui.theme.GlucoseWarning
 import com.example.kotlin_project.ui.theme.WarningOrange
 import com.example.kotlin_project.ui.theme.WarningOrangeText
 import com.example.kotlin_project.ui.utils.getDisplayName
@@ -37,7 +28,7 @@ fun PlateScreen(
     onBackClick: () -> Unit
 ) {
     val plateItems by viewModel.plateItems.collectAsState()
-    val glucoseText by viewModel.glucose.collectAsState()
+    val glucose by viewModel.glucose.collectAsState()
     val mealPeriod by viewModel.mealPeriod.collectAsState()
     val isSportsMode by viewModel.isSportsMode.collectAsState()
     val selectedInsulin by viewModel.selectedInsulin.collectAsState()
@@ -144,65 +135,11 @@ fun PlateScreen(
             }
 
             item {
-                OutlinedTextField(
-                    value = glucoseText,
-                    onValueChange = { viewModel.updateGlucose(it) },
-                    label = { Text(stringResource(R.string.glucose_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    trailingIcon = {
-                        TextButton(onClick = { }) {
-                            Text(
-                                stringResource(R.string.sync_cgm),
-                                fontSize = 12.sp
-                            )
-                        }
-                    }
+                GlucoseSection(
+                    glucose = glucose,
+                    onGlucoseChange = viewModel::updateGlucose,
+                    onSyncClick = {}
                 )
-            }
-
-            item {
-                val glucoseValue = glucoseText.toDoubleOrNull()
-                val glucoseColor = when {
-                    glucoseValue == null -> MaterialTheme.colorScheme.onSurfaceVariant
-                    glucoseValue < 4.0 || glucoseValue > 13.9 -> GlucoseDanger
-                    glucoseValue in 4.0..10.0 -> GlucoseNormal
-                    else -> GlucoseWarning
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    GlucoseLegendItem(
-                        color = GlucoseNormal,
-                        range = stringResource(R.string.glucose_range_normal)
-                    )
-                    GlucoseLegendItem(
-                        color = GlucoseWarning,
-                        range = stringResource(R.string.glucose_range_warning)
-                    )
-                    GlucoseLegendItem(
-                        color = GlucoseDanger,
-                        range = stringResource(R.string.glucose_range_danger)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    if (glucoseValue != null) {
-                        Text(
-                            text = String.format("%.1f", glucoseValue),
-                            color = glucoseColor,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            text = stringResource(R.string.glucose_current),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
-                    }
-                }
             }
 
             item {
@@ -319,7 +256,7 @@ fun PlateScreen(
                         doseResult = result
                     },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
-                    enabled = plateItems.isNotEmpty() && glucoseText.isNotEmpty(),
+                    enabled = plateItems.isNotEmpty() && glucose.valueMmol != null,
                     shape = MaterialTheme.shapes.large
                 ) {
                     Text(
@@ -394,19 +331,6 @@ fun PlateScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun GlucoseLegendItem(color: Color, range: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(color))
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = range,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
