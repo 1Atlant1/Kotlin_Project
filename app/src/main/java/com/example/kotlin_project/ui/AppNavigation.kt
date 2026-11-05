@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
+import com.example.kotlin_project.data.cgm.CgmRepository
 import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.components.BottomNavItem
 import com.example.kotlin_project.ui.screens.category.AddDishScreen
@@ -28,6 +29,7 @@ import com.example.kotlin_project.ui.screens.home.HomeViewModel
 import com.example.kotlin_project.ui.screens.home.HomeViewModelFactory
 import com.example.kotlin_project.ui.screens.plate.PlateScreen
 import com.example.kotlin_project.ui.screens.plate.PlateViewModel
+import com.example.kotlin_project.ui.screens.plate.PlateViewModelFactory
 import com.example.kotlin_project.ui.screens.settings.CarbRatiosScreen
 import com.example.kotlin_project.ui.screens.settings.MealTimesScreen
 import com.example.kotlin_project.ui.screens.settings.SettingsScreen
@@ -36,13 +38,15 @@ import com.example.kotlin_project.ui.screens.settings.SettingsViewModel
 @Composable
 fun AppNavigation(
     dishDao: DishDao,
+    cgmRepository: CgmRepository,
     settingsViewModel: SettingsViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val plateViewModel: PlateViewModel = viewModel()
+    val plateViewModel: PlateViewModel =
+        viewModel(factory = PlateViewModelFactory(cgmRepository))
 
     val showBottomBar =
         currentRoute == "home" || currentRoute == "plate" || currentRoute == "settings"

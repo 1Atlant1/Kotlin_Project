@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.example.kotlin_project.data.cgm.CgmRepository
 import com.example.kotlin_project.data.db.AppDatabase
 import com.example.kotlin_project.data.settings.SettingsRepository
 import com.example.kotlin_project.ui.AppNavigation
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private val database by lazy { AppDatabase.getDatabase(applicationContext) }
     private val dishDao by lazy { database.dishDao() }
+    private val cgmRepository by lazy { CgmRepository(applicationContext) }
     private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(SettingsRepository(applicationContext))
     }
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         AppNavigation(
                             dishDao = dishDao,
+                            cgmRepository = cgmRepository,
                             settingsViewModel = settingsViewModel
                         )
                     }

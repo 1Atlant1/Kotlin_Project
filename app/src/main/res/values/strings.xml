@@ -40,6 +40,9 @@
     <string name="glucose_range_between" translatable="false">%1$s–%2$s</string>
     <string name="glucose_range_outside">&gt;%1$s or &lt;%2$s</string>
     <string name="glucose_out_of_range">Enter a value from %1$s to %2$s mmol/L</string>
+    <string name="cgm_sync_success">Glucose from CGM: %1$s mmol/L (measured at %2$s)</string>
+    <string name="cgm_sync_no_data">No data from Juggluco yet. In Juggluco settings, turn on \"xDrip broadcast\" and tick this app.</string>
+    <string name="cgm_sync_outdated">The latest CGM reading is older than %1$d min. Check Juggluco or enter glucose manually.</string>
     <string name="insulin_label">Insulin</string>
     <string name="meal_period">Meal period</string>
     <string name="sports_mode">Sports mode</string>

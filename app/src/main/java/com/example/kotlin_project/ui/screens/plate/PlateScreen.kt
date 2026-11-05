@@ -1,5 +1,6 @@
 package com.example.kotlin_project.ui.screens.plate
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -9,16 +10,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.domain.model.CgmReading
+import com.example.kotlin_project.domain.model.Glucose
 import com.example.kotlin_project.domain.model.PlateItem
 import com.example.kotlin_project.ui.screens.settings.SettingsViewModel
 import com.example.kotlin_project.ui.theme.WarningOrange
 import com.example.kotlin_project.ui.theme.WarningOrangeText
 import com.example.kotlin_project.ui.utils.getDisplayName
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +34,7 @@ fun PlateScreen(
 ) {
     val plateItems by viewModel.plateItems.collectAsState()
     val glucose by viewModel.glucose.collectAsState()
+    val cgmSyncResult by viewModel.cgmSyncResult.collectAsState()
     val mealPeriod by viewModel.mealPeriod.collectAsState()
     val isSportsMode by viewModel.isSportsMode.collectAsState()
     val selectedInsulin by viewModel.selectedInsulin.collectAsState()
@@ -41,11 +47,21 @@ fun PlateScreen(
     }
     var insulinExpanded by remember { mutableStateOf(false) }
     var periodExpanded by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val lowGlucoseWarningText = stringResource(R.string.low_glucose_warning)
     val borderlineWarningText = stringResource(R.string.borderline_warning)
 
+    val cgmSyncMessage = cgmSyncResult?.let { cgmSyncMessage(it) }
+    LaunchedEffect(cgmSyncResult) {
+        if (cgmSyncMessage != null) {
+            snackbarHostState.showSnackbar(cgmSyncMessage)
+            viewModel.onCgmSyncResultShown()
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -138,7 +154,7 @@ fun PlateScreen(
                 GlucoseSection(
                     glucose = glucose,
                     onGlucoseChange = viewModel::updateGlucose,
-                    onSyncClick = {}
+                    onSyncClick = viewModel::syncGlucoseFromCgm
                 )
             }
 
@@ -332,6 +348,23 @@ fun PlateScreen(
             }
         }
     }
+}
+
+@Composable
+private fun cgmSyncMessage(result: CgmSyncResult): String = when (result) {
+    is CgmSyncResult.Success -> {
+        val measuredAt = DateFormat.getTimeFormat(LocalContext.current)
+            .format(Date(result.reading.timestampMillis))
+        stringResource(
+            R.string.cgm_sync_success,
+            Glucose.format(result.reading.glucoseMmol),
+            measuredAt
+        )
+    }
+
+    CgmSyncResult.NoData -> stringResource(R.string.cgm_sync_no_data)
+
+    CgmSyncResult.Outdated -> stringResource(R.string.cgm_sync_outdated, CgmReading.MAX_AGE_MINUTES)
 }
 
 @Composable

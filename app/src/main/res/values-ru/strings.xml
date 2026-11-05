@@ -49,6 +49,9 @@
     <string name="glucose_unit">ммоль/л</string>
     <string name="glucose_range_outside">&gt;%1$s или &lt;%2$s</string>
     <string name="glucose_out_of_range">Введите значение от %1$s до %2$s ммоль/л</string>
+    <string name="cgm_sync_success">Сахар из CGM: %1$s ммоль/л (замер в %2$s)</string>
+    <string name="cgm_sync_no_data">От Juggluco ещё нет данных. В настройках Juggluco включите «Передача в xDrip» (xDrip broadcast) и отметьте это приложение.</string>
+    <string name="cgm_sync_outdated">Последнее значение CGM старше %1$d мин. Проверьте Juggluco или введите сахар вручную.</string>
     <string name="insulin_label">Инсулин</string>
     <string name="meal_period">Период приёма пищи</string>
     <string name="sports_mode">Режим спорт</string>

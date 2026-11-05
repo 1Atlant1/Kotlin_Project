@@ -1,6 +1,8 @@
 package com.example.kotlin_project.ui.screens.plate
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.kotlin_project.data.cgm.CgmRepository
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.domain.calculator.DoseResult
 import com.example.kotlin_project.domain.calculator.InsulinCalculator
@@ -9,15 +11,22 @@ import com.example.kotlin_project.domain.model.PlateItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class PlateViewModel : ViewModel() {
+class PlateViewModel(
+    private val cgmRepository: CgmRepository
+) : ViewModel() {
 
     private val _plateItems = MutableStateFlow<List<PlateItem>>(emptyList())
     val plateItems: StateFlow<List<PlateItem>> = _plateItems.asStateFlow()
 
     private val _glucose = MutableStateFlow(GlucoseInput())
     val glucose: StateFlow<GlucoseInput> = _glucose.asStateFlow()
+
+    private val _cgmSyncResult = MutableStateFlow<CgmSyncResult?>(null)
+    val cgmSyncResult: StateFlow<CgmSyncResult?> = _cgmSyncResult.asStateFlow()
 
     private val _mealPeriod = MutableStateFlow("Lunch")
     val mealPeriod: StateFlow<String> = _mealPeriod.asStateFlow()
@@ -44,6 +53,26 @@ class PlateViewModel : ViewModel() {
         if (Glucose.isAllowedInput(text)) {
             _glucose.value = GlucoseInput(text)
         }
+    }
+
+    fun syncGlucoseFromCgm() {
+        viewModelScope.launch {
+            val reading = cgmRepository.latestReading.first()
+            val now = System.currentTimeMillis()
+
+            _cgmSyncResult.value = when {
+                reading == null -> CgmSyncResult.NoData
+                !reading.isFresh(now) -> CgmSyncResult.Outdated
+                else -> {
+                    _glucose.value = GlucoseInput(Glucose.format(reading.glucoseMmol))
+                    CgmSyncResult.Success(reading)
+                }
+            }
+        }
+    }
+
+    fun onCgmSyncResultShown() {
+        _cgmSyncResult.value = null
     }
 
     fun updateMealPeriod(period: String) {
