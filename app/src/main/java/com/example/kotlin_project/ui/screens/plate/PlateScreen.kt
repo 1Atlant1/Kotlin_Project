@@ -301,6 +301,15 @@ fun PlateScreen(
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 32.sp
                                 )
+
+                                result.warning?.let { warning ->
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = warning,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = WarningOrangeText
+                                    )
+                                }
                             }
                         }
                     }
