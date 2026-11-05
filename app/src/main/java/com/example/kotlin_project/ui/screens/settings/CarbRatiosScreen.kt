@@ -3,7 +3,6 @@ package com.example.kotlin_project.ui.screens.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,10 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.ui.components.DecimalTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,11 +107,8 @@ fun CarbRatiosScreen(
             items(normalMeals) { (mealKey, mealResId, defaultValue) ->
                 CarbRatioRow(
                     mealResId = mealResId,
-                    value = settings.carbRatios[mealKey]?.toString() ?: defaultValue.toString(),
-                    onValueChange = { newValue ->
-                        val doubleValue = newValue.toDoubleOrNull() ?: defaultValue
-                        viewModel.updateCarbRatio(mealKey, doubleValue)
-                    }
+                    value = settings.carbRatios[mealKey] ?: defaultValue,
+                    onValueChange = { viewModel.updateCarbRatio(mealKey, it) }
                 )
             }
 
@@ -148,11 +144,8 @@ fun CarbRatiosScreen(
             items(sportMeals) { (mealKey, mealResId, defaultValue) ->
                 CarbRatioRow(
                     mealResId = mealResId,
-                    value = settings.carbRatios[mealKey]?.toString() ?: defaultValue.toString(),
-                    onValueChange = { newValue ->
-                        val doubleValue = newValue.toDoubleOrNull() ?: defaultValue
-                        viewModel.updateCarbRatio(mealKey, doubleValue)
-                    }
+                    value = settings.carbRatios[mealKey] ?: defaultValue,
+                    onValueChange = { viewModel.updateCarbRatio(mealKey, it) }
                 )
             }
 
@@ -186,8 +179,8 @@ fun CarbRatiosScreen(
 @Composable
 fun CarbRatioRow(
     mealResId: Int,
-    value: String,
-    onValueChange: (String) -> Unit
+    value: Double,
+    onValueChange: (Double) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
@@ -199,12 +192,10 @@ fun CarbRatioRow(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
-        OutlinedTextField(
+        DecimalTextField(
             value = value,
             onValueChange = onValueChange,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.width(100.dp),
-            singleLine = true,
             textStyle = LocalTextStyle.current.copy(fontSize = 18.sp, fontWeight = FontWeight.Bold)
         )
     }

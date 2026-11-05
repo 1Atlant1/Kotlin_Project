@@ -29,7 +29,9 @@ import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
 import com.example.kotlin_project.ui.utils.ImageHelper
+import com.example.kotlin_project.ui.utils.filterDecimalInput
 import com.example.kotlin_project.ui.utils.getCategoryDisplayName
+import com.example.kotlin_project.ui.utils.toDecimalOrNull
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -117,15 +119,15 @@ fun AddDishScreen(
                     }
                     Button(
                         onClick = {
-                            if (nameEn.isNotBlank() && nameRu.isNotBlank() && carbsText.isNotBlank()) {
+                            if (nameEn.isNotBlank() && nameRu.isNotBlank() && carbsText.toDecimalOrNull() != null) {
                                 val dish = Dish(
                                     name = nameEn.trim(),
                                     nameRu = nameRu.trim(),
                                     category = selectedCategory,
-                                    carbsPer100g = carbsText.toDoubleOrNull() ?: 0.0,
-                                    proteinPer100g = proteinText.toDoubleOrNull() ?: 0.0,
-                                    fatPer100g = fatText.toDoubleOrNull() ?: 0.0,
-                                    caloriesPer100g = caloriesText.toDoubleOrNull() ?: 0.0,
+                                    carbsPer100g = carbsText.toDecimalOrNull() ?: 0.0,
+                                    proteinPer100g = proteinText.toDecimalOrNull() ?: 0.0,
+                                    fatPer100g = fatText.toDecimalOrNull() ?: 0.0,
+                                    caloriesPer100g = caloriesText.toDecimalOrNull() ?: 0.0,
                                     isDrink = isDrink,
                                     isCustom = true,
                                     imagePath = selectedImageUri?.path
@@ -265,7 +267,7 @@ fun AddDishScreen(
 
             OutlinedTextField(
                 value = proteinText,
-                onValueChange = { proteinText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                onValueChange = { proteinText = it.filterDecimalInput() },
                 label = { Text(stringResource(R.string.protein)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -273,7 +275,7 @@ fun AddDishScreen(
             )
             OutlinedTextField(
                 value = fatText,
-                onValueChange = { fatText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                onValueChange = { fatText = it.filterDecimalInput() },
                 label = { Text(stringResource(R.string.fat)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
@@ -281,18 +283,18 @@ fun AddDishScreen(
             )
             OutlinedTextField(
                 value = carbsText,
-                onValueChange = { carbsText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                onValueChange = { carbsText = it.filterDecimalInput() },
                 label = { Text("${stringResource(R.string.carbs)} *") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                isError = showValidationError && carbsText.isBlank(),
+                isError = showValidationError && carbsText.toDecimalOrNull() == null,
                 supportingText = {
-                    if (showValidationError && carbsText.isBlank()) Text(stringResource(R.string.carbs_required))
+                    if (showValidationError && carbsText.toDecimalOrNull() == null) Text(stringResource(R.string.carbs_required))
                 })
             OutlinedTextField(
                 value = caloriesText,
-                onValueChange = { caloriesText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                onValueChange = { caloriesText = it.filterDecimalInput() },
                 label = { Text(stringResource(R.string.kcal)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 modifier = Modifier.fillMaxWidth(),

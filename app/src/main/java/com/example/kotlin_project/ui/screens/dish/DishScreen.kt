@@ -22,7 +22,9 @@ import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
+import com.example.kotlin_project.ui.utils.filterDecimalInput
 import com.example.kotlin_project.ui.utils.getDisplayName
+import com.example.kotlin_project.ui.utils.toDecimalOrNull
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +38,7 @@ fun DishScreen(
     val dish by dishDao.getDishById(dishId).collectAsState(initial = null)
 
     var weightText by remember { mutableStateOf("") }
-    val weight = weightText.toDoubleOrNull() ?: 0.0
+    val weight = weightText.toDecimalOrNull() ?: 0.0
 
     val carbsInPortion = if (dish != null) dish!!.carbsPer100g * weight / 100.0 else 0.0
     val xe = carbsInPortion / 12.0
@@ -89,7 +91,7 @@ fun DishScreen(
 
                 OutlinedTextField(
                     value = weightText,
-                    onValueChange = { weightText = it.filter { ch -> ch.isDigit() || ch == '.' } },
+                    onValueChange = { weightText = it.filterDecimalInput() },
                     label = { Text(stringResource(R.string.portion_weight_g)) },
                     placeholder = { Text(stringResource(R.string.portion_example)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

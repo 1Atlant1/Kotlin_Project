@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.ui.components.DecimalTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,35 +69,17 @@ fun SettingsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    OutlinedTextField(
-                        value = settings.targetGlucose.toString(),
-                        onValueChange = { newText ->
-                            val newValue = newText.toDoubleOrNull()
-                            if (newValue != null) {
-                                viewModel.updateTargetGlucose(newValue)
-                            }
-                        },
+                    DecimalTextField(
+                        value = settings.targetGlucose,
+                        onValueChange = viewModel::updateTargetGlucose,
                         label = { Text(stringResource(R.string.target_glucose)) },
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal
-                        ),
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
+                        modifier = Modifier.weight(1f)
                     )
-                    OutlinedTextField(
-                        value = settings.insulinSensitivity.toString(),
-                        onValueChange = { newText ->
-                            val newValue = newText.toDoubleOrNull()
-                            if (newValue != null) {
-                                viewModel.updateInsulinSensitivity(newValue)
-                            }
-                        },
+                    DecimalTextField(
+                        value = settings.insulinSensitivity,
+                        onValueChange = viewModel::updateInsulinSensitivity,
                         label = { Text(stringResource(R.string.insulin_sensitivity)) },
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal
-                        ),
-                        modifier = Modifier.weight(1f),
-                        singleLine = true
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
