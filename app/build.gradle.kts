@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.everydaydia"
-    compileSdk = 36
+    namespace = "com.example.kotlin_project"
+    compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.everydaydia"
+        applicationId = "com.example.kotlin_project"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -46,13 +47,19 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
 
+
+    implementation(libs.androidx.appcompat)
+
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.ui)
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
