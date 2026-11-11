@@ -12,11 +12,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.ui.components.AppTopBar
 import com.example.kotlin_project.ui.components.DecimalTextField
+import com.example.kotlin_project.ui.components.InfoBanner
+import com.example.kotlin_project.ui.components.SegmentedSelector
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
@@ -28,30 +29,10 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = stringResource(R.string.settings_title),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Text("←", fontSize = 24.sp)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            AppTopBar(
+                title = stringResource(R.string.app_name),
+                subtitle = stringResource(R.string.settings_title),
+                onBackClick = onBackClick
             )
         }
     ) { paddingValues ->
@@ -63,7 +44,6 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(top = 16.dp, bottom = 80.dp)
         ) {
-
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -107,6 +87,7 @@ fun SettingsScreen(
                     text = stringResource(R.string.insulin_list),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -114,7 +95,6 @@ fun SettingsScreen(
             item {
                 InsulinSelector(viewModel = viewModel)
             }
-
 
             item {
                 ThemeSelector(viewModel = viewModel)
@@ -125,27 +105,7 @@ fun SettingsScreen(
             }
 
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Info,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(R.string.consult_doctor),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
-                }
+                InfoBanner(text = stringResource(R.string.consult_doctor))
             }
         }
     }
@@ -161,7 +121,9 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             ExposedDropdownMenuBox(
@@ -173,10 +135,18 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.insulin_list)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Vaccines,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor(type = MenuAnchorType.PrimaryNotEditable, enabled = true)
+                        .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true)
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
@@ -220,6 +190,7 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
     if (showAddDialog) {
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
+            shape = MaterialTheme.shapes.extraLarge,
             title = { Text(stringResource(R.string.add_insulin_title)) },
             text = {
                 OutlinedTextField(
@@ -227,11 +198,12 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
                     onValueChange = { newInsulinName = it },
                     label = { Text(stringResource(R.string.insulin_name_label)) },
                     singleLine = true,
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.fillMaxWidth()
                 )
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         viewModel.addCustomInsulin(newInsulinName.trim())
                         newInsulinName = ""
@@ -257,46 +229,19 @@ fun InsulinSelector(viewModel: SettingsViewModel) {
 @Composable
 fun ThemeSelector(viewModel: SettingsViewModel) {
     val settings by viewModel.settings.collectAsState()
+    val lightLabel = stringResource(R.string.light_theme)
+    val darkLabel = stringResource(R.string.dark_theme)
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    SettingsOptionCard(
+        icon = if (settings.isDarkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
+        title = stringResource(R.string.theme_label)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(stringResource(R.string.theme_label), style = MaterialTheme.typography.bodyLarge)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = !settings.isDarkTheme,
-                    onClick = { viewModel.setDarkTheme(false) },
-                    label = { Text(stringResource(R.string.light_theme)) },
-                    leadingIcon = {
-                        if (!settings.isDarkTheme) Icon(
-                            Icons.Default.Check,
-                            null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                )
-                FilterChip(
-                    selected = settings.isDarkTheme,
-                    onClick = { viewModel.setDarkTheme(true) },
-                    label = { Text(stringResource(R.string.dark_theme)) },
-                    leadingIcon = {
-                        if (settings.isDarkTheme) Icon(
-                            Icons.Default.Check,
-                            null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                )
-            }
-        }
+        SegmentedSelector(
+            options = listOf(false, true),
+            selected = settings.isDarkTheme,
+            onSelect = viewModel::setDarkTheme,
+            label = { isDark -> if (isDark) darkLabel else lightLabel }
+        )
     }
 }
 
@@ -304,47 +249,52 @@ fun ThemeSelector(viewModel: SettingsViewModel) {
 fun LanguageSelector(viewModel: SettingsViewModel) {
     val settings by viewModel.settings.collectAsState()
 
+    SettingsOptionCard(
+        icon = Icons.Default.Language,
+        title = stringResource(R.string.language_label)
+    ) {
+        SegmentedSelector(
+            options = listOf("EN", "RU"),
+            selected = settings.language,
+            onSelect = viewModel::updateLanguage,
+            label = { it }
+        )
+    }
+}
+
+@Composable
+private fun SettingsOptionCard(
+    icon: ImageVector,
+    title: String,
+    content: @Composable () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                stringResource(R.string.language_label),
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(
-                    selected = settings.language == "EN",
-                    onClick = { viewModel.updateLanguage("EN") },
-                    label = { Text("EN") },
-                    leadingIcon = {
-                        if (settings.language == "EN") Icon(
-                            Icons.Default.Check,
-                            null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(22.dp)
                 )
-                FilterChip(
-                    selected = settings.language == "RU",
-                    onClick = { viewModel.updateLanguage("RU") },
-                    label = { Text("RU") },
-                    leadingIcon = {
-                        if (settings.language == "RU") Icon(
-                            Icons.Default.Check,
-                            null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
+            content()
         }
     }
 }
@@ -359,7 +309,9 @@ fun SettingsNavigationCard(
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
@@ -368,13 +320,24 @@ fun SettingsNavigationCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
-                )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
@@ -400,7 +363,6 @@ fun SettingsNavigationCard(
 
 @Composable
 fun formatMealTimesLocalized(mealTimes: Map<String, Pair<String, String>>): String {
-
     val breakfastName = stringResource(R.string.breakfast)
     val lunchName = stringResource(R.string.lunch)
     val dinnerName = stringResource(R.string.dinner)
@@ -415,10 +377,8 @@ fun formatMealTimesLocalized(mealTimes: Map<String, Pair<String, String>>): Stri
     }
 }
 
-
 @Composable
 fun formatCarbRatiosLocalized(carbRatios: Map<String, Double>): String {
-
     val breakfastName = stringResource(R.string.breakfast)
     val lunchName = stringResource(R.string.lunch)
     val dinnerName = stringResource(R.string.dinner)
