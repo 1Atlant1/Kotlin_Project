@@ -71,7 +71,7 @@
     <string name="correction">Коррекция: %.2f ЕД</string>
     <string name="total_dose">ИТОГОВАЯ ДОЗА: %.2f ЕД</string>
     <string name="confirm_injection">Подтвердить инъекцию</string>
-    <string name="warning_title">⚠ Предупреждение</string>
+    <string name="warning_title">Предупреждение</string>
     <string name="low_glucose_warning">Сахар ниже 3.9 ммоль/л. Съешьте 1-2 ХЕ быстрых углеводов, подождите 15 минут и повторите расчёт.</string>
 
     <string name="settings_title">Настройки</string>
@@ -129,4 +129,8 @@
     <string name="delete_dish_confirmation">Вы уверены, что хотите удалить %s?</string>
     <string name="edit_dish_title">Редактировать блюдо</string>
     <string name="carbs_per_100g_format">%1$s г углеводов/100г</string>
+    <string name="navigate_back">Назад</string>
+    <string name="your_portion_label">ВАША ПОРЦИЯ</string>
+    <string name="dish_type_label">Тип</string>
+    <string name="photo_label">Фото</string>
 </resources>

@@ -60,7 +60,7 @@
     <string name="correction">Correction: %.2f U</string>
     <string name="total_dose">TOTAL DOSE: %.2f U</string>
     <string name="confirm_injection">Confirm injection</string>
-    <string name="warning_title">⚠ Warning</string>
+    <string name="warning_title">Warning</string>
     <string name="low_glucose_warning">Glucose below 3.9 mmol/L. Eat 1-2 XE of fast carbs, wait 15 minutes and recalculate.</string>
     <string name="settings_title">Settings</string>
     <string name="target_glucose">Target glucose</string>
@@ -111,4 +111,8 @@
     <string name="edit_dish_title">Edit Dish</string>
     <string name="carbs_per_100g_format">%1$s g carbs/100g</string>
 
+    <string name="navigate_back">Back</string>
+    <string name="your_portion_label">YOUR PORTION</string>
+    <string name="dish_type_label">Type</string>
+    <string name="photo_label">Photo</string>
 </resources>

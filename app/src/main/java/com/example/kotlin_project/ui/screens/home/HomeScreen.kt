@@ -14,9 +14,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import com.example.kotlin_project.R
+import com.example.kotlin_project.ui.components.InfoBanner
 import com.example.kotlin_project.ui.utils.getCategoryDisplayName
+
+private const val GRID_COLUMNS = 2
+private val GridSpacing = 12.dp
+private val GridBottomPadding = 4.dp
+private val MinCategoryCardHeight = 84.dp
+private val MaxCategoryCardHeight = 120.dp
 
 @Composable
 fun HomeScreen(
@@ -36,12 +46,20 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.WaterDrop,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(40.dp)
-            )
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(48.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.WaterDrop,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
@@ -58,7 +76,7 @@ fun HomeScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = stringResource(R.string.home_title),
@@ -72,63 +90,63 @@ fun HomeScreen(
             modifier = Modifier.padding(top = 4.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (categories.isEmpty()) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(bottom = 80.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxSize()
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
-                items(categories) { category ->
-                    CategoryCard(
-                        category = category,
-                        viewModel = viewModel,
-                        onClick = { onCategoryClick(category) }
-                    )
+                val rows = (categories.size + GRID_COLUMNS - 1) / GRID_COLUMNS
+                val cardHeight = categoryCardHeight(maxHeight, rows)
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(GRID_COLUMNS),
+                    contentPadding = PaddingValues(bottom = GridBottomPadding),
+                    horizontalArrangement = Arrangement.spacedBy(GridSpacing),
+                    verticalArrangement = Arrangement.spacedBy(GridSpacing),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(categories) { category ->
+                        CategoryCard(
+                            category = category,
+                            viewModel = viewModel,
+                            height = cardHeight,
+                            onClick = { onCategoryClick(category) }
+                        )
+                    }
                 }
             }
         }
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 80.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = stringResource(R.string.xe_info),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
+        InfoBanner(
+            text = stringResource(R.string.xe_info),
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+        )
     }
+}
+
+private fun categoryCardHeight(availableHeight: Dp, rows: Int): Dp {
+    if (rows <= 0) return MaxCategoryCardHeight
+    val freeHeight = availableHeight - GridBottomPadding - GridSpacing * (rows - 1) - 1.dp
+    return (freeHeight / rows).coerceIn(MinCategoryCardHeight, MaxCategoryCardHeight)
 }
 
 @Composable
 fun CategoryCard(
     category: String,
     viewModel: HomeViewModel,
+    height: Dp,
     onClick: () -> Unit
 ) {
     val count by viewModel.getDishCount(category).collectAsState()
@@ -138,42 +156,49 @@ fun CategoryCard(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp),
+            .height(height),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
                 shape = MaterialTheme.shapes.small,
                 color = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(36.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-            Text(
-                text = getCategoryDisplayName(category),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = pluralStringResource(R.plurals.dishes_count, count, count),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = getCategoryDisplayName(category),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = pluralStringResource(R.plurals.dishes_count, count, count),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
+                )
+            }
         }
     }
 }

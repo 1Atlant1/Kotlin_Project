@@ -2,11 +2,11 @@ package com.example.kotlin_project.ui.screens.dish
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddShoppingCart
+import androidx.compose.material.icons.filled.Scale
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,12 +22,14 @@ import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
+import com.example.kotlin_project.ui.components.AppTopBar
+import com.example.kotlin_project.ui.theme.DoseTextStyle
+import com.example.kotlin_project.ui.theme.PillShape
 import com.example.kotlin_project.ui.utils.filterDecimalInput
 import com.example.kotlin_project.ui.utils.getDisplayName
 import com.example.kotlin_project.ui.utils.toDecimalOrNull
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DishScreen(
     dishDao: DishDao,
@@ -45,23 +47,43 @@ fun DishScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(dish?.getDisplayName() ?: "Dish", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            AppTopBar(
+                title = stringResource(R.string.app_name),
+                subtitle = dish?.getDisplayName(),
+                onBackClick = onBackClick
             )
+        },
+        bottomBar = {
+            if (dish != null) {
+                Button(
+                    onClick = {
+                        if (weight > 0 && dish != null) {
+                            onAddToPlate(dish!!, weight.toInt())
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(56.dp),
+                    enabled = weight > 0,
+                    shape = PillShape
+                ) {
+                    Icon(imageVector = Icons.Default.AddShoppingCart, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        stringResource(R.string.add_to_plate),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         if (dish == null) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -82,10 +104,16 @@ fun DishScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
-                            .clip(RoundedCornerShape(12.dp)),
+                            .clip(MaterialTheme.shapes.large),
                         contentScale = ContentScale.Crop
                     )
                 }
+
+                Text(
+                    text = dish!!.getDisplayName(),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
 
                 NutritionCard(dish = dish!!)
 
@@ -94,7 +122,15 @@ fun DishScreen(
                     onValueChange = { weightText = it.filterDecimalInput() },
                     label = { Text(stringResource(R.string.portion_weight_g)) },
                     placeholder = { Text(stringResource(R.string.portion_example)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Scale,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -106,20 +142,6 @@ fun DishScreen(
                         xe = xe
                     )
                 }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(
-                    onClick = {
-                        if (weight > 0 && dish != null) {
-                            onAddToPlate(dish!!, weight.toInt())
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = weight > 0
-                ) {
-                    Text(stringResource(R.string.add_to_plate), fontSize = 16.sp)
-                }
             }
         }
     }
@@ -129,7 +151,9 @@ fun DishScreen(
 fun NutritionCard(dish: Dish) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -137,31 +161,73 @@ fun NutritionCard(dish: Dish) {
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                NutritionItem(stringResource(R.string.carbs), "${dish.carbsPer100g} g")
-                NutritionItem(stringResource(R.string.protein), "${dish.proteinPer100g} g")
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                NutritionItem(stringResource(R.string.fat), "${dish.fatPer100g} g")
-                NutritionItem(stringResource(R.string.kcal), "${dish.caloriesPer100g}")
+                NutritionItem(
+                    label = stringResource(R.string.carbs),
+                    value = "${dish.carbsPer100g} g",
+                    highlighted = true,
+                    modifier = Modifier.weight(1f)
+                )
+                NutritionItem(
+                    label = stringResource(R.string.protein),
+                    value = "${dish.proteinPer100g} g",
+                    modifier = Modifier.weight(1f)
+                )
+                NutritionItem(
+                    label = stringResource(R.string.fat),
+                    value = "${dish.fatPer100g} g",
+                    modifier = Modifier.weight(1f)
+                )
+                NutritionItem(
+                    label = stringResource(R.string.kcal),
+                    value = "${dish.caloriesPer100g}",
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }
 }
 
 @Composable
-fun NutritionItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        Text(text = label, style = MaterialTheme.typography.bodySmall)
+fun NutritionItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    highlighted: Boolean = false
+) {
+    Surface(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        color = if (highlighted) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        }
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = if (highlighted) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
@@ -169,26 +235,37 @@ fun NutritionItem(label: String, value: String) {
 fun ResultCard(weight: Double, carbs: Double, xe: Double) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
+                text = stringResource(R.string.your_portion_label),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
                 text = stringResource(R.string.your_portion, weight.toInt()),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = stringResource(R.string.carbs_in_portion, carbs),
-                style = MaterialTheme.typography.bodyLarge
+                text = stringResource(R.string.xe_result, xe),
+                style = DoseTextStyle,
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = stringResource(R.string.xe_result, xe),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                text = stringResource(R.string.carbs_in_portion, carbs),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
     }

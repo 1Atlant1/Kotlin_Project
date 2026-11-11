@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,9 +24,11 @@ import com.example.kotlin_project.domain.calculator.MealPeriodDetector
 import com.example.kotlin_project.domain.model.CgmReading
 import com.example.kotlin_project.domain.model.Glucose
 import com.example.kotlin_project.domain.model.PlateItem
+import com.example.kotlin_project.ui.components.AppTopBar
 import com.example.kotlin_project.ui.screens.settings.SettingsViewModel
-import com.example.kotlin_project.ui.theme.WarningOrange
-import com.example.kotlin_project.ui.theme.WarningOrangeText
+import com.example.kotlin_project.ui.theme.DoseTextStyle
+import com.example.kotlin_project.ui.theme.PillShape
+import com.example.kotlin_project.ui.theme.extendedColors
 import com.example.kotlin_project.ui.utils.getDisplayName
 import kotlinx.coroutines.delay
 import java.time.LocalTime
@@ -73,31 +78,10 @@ fun PlateScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = stringResource(R.string.my_plate_title),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Text(
-                            "←",
-                            fontSize = 24.sp
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+            AppTopBar(
+                title = stringResource(R.string.app_name),
+                subtitle = stringResource(R.string.my_plate_title),
+                onBackClick = onBackClick
             )
         }
     ) { paddingValues ->
@@ -112,6 +96,7 @@ fun PlateScreen(
                 item {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                     ) {
                         Row(
@@ -143,12 +128,20 @@ fun PlateScreen(
 
             if (plateItems.isEmpty()) {
                 item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().height(100.dp),
-                        contentAlignment = Alignment.Center
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Inbox,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.outline,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             stringResource(R.string.plate_empty),
+                            style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -179,6 +172,7 @@ fun PlateScreen(
                         readOnly = true,
                         label = { Text(stringResource(R.string.insulin_label)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = insulinExpanded) },
+                        shape = MaterialTheme.shapes.medium,
                         modifier = Modifier.fillMaxWidth().menuAnchor(
                             type = ExposedDropdownMenuAnchorType.PrimaryNotEditable,
                             enabled = true
@@ -210,9 +204,17 @@ fun PlateScreen(
             }
 
             item {
+                val sportsColor = MaterialTheme.extendedColors.sports
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    shape = MaterialTheme.shapes.large,
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isSportsMode) {
+                            MaterialTheme.extendedColors.sportsContainer
+                        } else {
+                            MaterialTheme.colorScheme.surface
+                        }
+                    )
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -220,9 +222,10 @@ fun PlateScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "⚡",
-                                fontSize = 20.sp,
+                            Icon(
+                                imageVector = Icons.Default.Bolt,
+                                contentDescription = null,
+                                tint = sportsColor,
                                 modifier = Modifier.padding(end = 8.dp)
                             )
                             Text(
@@ -232,7 +235,12 @@ fun PlateScreen(
                         }
                         Switch(
                             checked = isSportsMode,
-                            onCheckedChange = { viewModel.toggleSportsMode() })
+                            onCheckedChange = { viewModel.toggleSportsMode() },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = sportsColor,
+                                checkedThumbColor = MaterialTheme.colorScheme.surface
+                            )
+                        )
                     }
                 }
             }
@@ -254,7 +262,7 @@ fun PlateScreen(
                     },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     enabled = plateItems.isNotEmpty() && glucose.valueMmol != null,
-                    shape = MaterialTheme.shapes.large
+                    shape = PillShape
                 ) {
                     Text(
                         stringResource(R.string.calculate_dose),
@@ -268,23 +276,41 @@ fun PlateScreen(
             doseResult?.let { result ->
                 item {
                     if (result.isLowGlucose) {
+                        val warningContent = MaterialTheme.extendedColors.onWarningContainer
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = WarningOrange)
+                            shape = MaterialTheme.shapes.large,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.extendedColors.warningContainer
+                            )
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    text = stringResource(R.string.warning_title),
-                                    fontWeight = FontWeight.Bold,
-                                    color = WarningOrangeText
+                            Row(modifier = Modifier.padding(16.dp)) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = warningContent
                                 )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = result.warning ?: "", color = WarningOrangeText)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.warning_title),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = warningContent
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = result.warning ?: "",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = warningContent
+                                    )
+                                }
                             }
                         }
                     } else {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large,
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             Column(modifier = Modifier.padding(20.dp)) {
@@ -300,10 +326,8 @@ fun PlateScreen(
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Text(
                                     text = stringResource(R.string.total_dose, result.totalDose),
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 32.sp
+                                    style = DoseTextStyle,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
 
                                 result.warning?.let { warning ->
@@ -311,7 +335,7 @@ fun PlateScreen(
                                     Text(
                                         text = warning,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = WarningOrangeText
+                                        color = MaterialTheme.extendedColors.onWarningContainer
                                     )
                                 }
                             }
@@ -325,7 +349,7 @@ fun PlateScreen(
                     Button(
                         onClick = { viewModel.clearPlate(); doseResult = null },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
-                        shape = MaterialTheme.shapes.large,
+                        shape = PillShape,
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) {
                         Text(
@@ -369,6 +393,8 @@ private fun cgmSyncMessage(result: CgmSyncResult): String = when (result) {
 fun PlateItemCard(item: PlateItem, onRemove: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -392,17 +418,23 @@ fun PlateItemCard(item: PlateItem, onRemove: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Text(
-                text = stringResource(R.string.xe_result, item.xe),
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(end = 8.dp)
-            )
+            Surface(
+                shape = PillShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.padding(end = 4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.xe_result, item.xe),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                )
+            }
             IconButton(onClick = onRemove) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Remove",
+                    contentDescription = stringResource(R.string.delete),
                     tint = MaterialTheme.colorScheme.error
                 )
             }
