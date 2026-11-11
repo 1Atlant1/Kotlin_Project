@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,13 +20,14 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.kotlin_project.R
 import com.example.kotlin_project.data.db.Dish
 import com.example.kotlin_project.data.db.DishDao
-import com.example.kotlin_project.ui.theme.InfoGreen
-import com.example.kotlin_project.ui.theme.InfoGreenText
+import com.example.kotlin_project.ui.components.AppTopBar
+import com.example.kotlin_project.ui.components.InfoBanner
+import com.example.kotlin_project.ui.theme.PillShape
+import com.example.kotlin_project.ui.theme.extendedColors
 import com.example.kotlin_project.ui.utils.getCategoryDisplayName
 import com.example.kotlin_project.ui.utils.getDisplayName
 import kotlinx.coroutines.launch
@@ -60,33 +59,30 @@ fun CategoryScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = getCategoryDisplayName(categoryName),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
-                )
+            AppTopBar(
+                title = stringResource(R.string.app_name),
+                subtitle = getCategoryDisplayName(categoryName),
+                onBackClick = onBackClick
+            )
+        },
+        bottomBar = {
+            InfoBanner(
+                text = stringResource(R.string.select_dish_hint),
+                modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 12.dp),
+                containerColor = MaterialTheme.extendedColors.infoContainer,
+                contentColor = MaterialTheme.extendedColors.onInfoContainer,
+                iconTint = MaterialTheme.extendedColors.onInfoContainer
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddDishClick,
+                shape = MaterialTheme.shapes.large,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = "Add dish",
+                    contentDescription = stringResource(R.string.add_dish_title),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -108,7 +104,11 @@ fun CategoryScreen(
                 shape = MaterialTheme.shapes.extraLarge,
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    focusedLeadingIconColor = MaterialTheme.colorScheme.primary
                 )
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -131,16 +131,22 @@ fun CategoryScreen(
             Spacer(modifier = Modifier.height(8.dp))
             if (filteredDishes.isEmpty()) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         stringResource(R.string.no_dishes_found),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             } else {
                 LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(bottom = 80.dp)
                 ) {
@@ -154,30 +160,6 @@ fun CategoryScreen(
                             }
                         )
                     }
-                }
-            }
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 80.dp),
-                colors = CardDefaults.cardColors(containerColor = InfoGreen)
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = null,
-                        tint = InfoGreenText,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.select_dish_hint),
-                        color = InfoGreenText,
-                        style = MaterialTheme.typography.bodySmall
-                    )
                 }
             }
         }
@@ -286,6 +268,7 @@ fun DishItemCard(
                     onLongPress = { onLongClick() }
                 )
             },
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
@@ -297,7 +280,7 @@ fun DishItemCard(
         ) {
             if (!dish.imagePath.isNullOrBlank()) {
                 AsyncImage(
-                    model = File(dish.imagePath!!),
+                    model = File(dish.imagePath),
                     contentDescription = dish.getDisplayName(),
                     modifier = Modifier
                         .size(60.dp)
@@ -334,7 +317,7 @@ fun DishItemCard(
             }
             Spacer(modifier = Modifier.width(12.dp))
             Surface(
-                shape = MaterialTheme.shapes.small,
+                shape = PillShape,
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Text(
