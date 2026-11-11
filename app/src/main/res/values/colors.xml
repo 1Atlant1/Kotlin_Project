@@ -3,4 +3,6 @@
     <color name="primary">#4A90D9</color>
     <color name="primary_dark">#1976D2</color>
     <color name="accent">#5CB8A5</color>
+    <color name="background">#F5F7FA</color>
+    <bool name="light_system_bars">true</bool>
 </resources>
